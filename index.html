@@ -829,7 +829,7 @@
                     </div>
                 </div>
                 
-                <button class="navigate-btn" onclick="navigateTo(40.6669, 16.6089, 'Sassi di Matera', 'walking')">
+                <button class="navigate-btn" onclick="navigateTo(40.6669, 16.6089, 'Sassi di Matera - Ingresso principale', 'walking')">
                     🚶‍♂️ Naviga a piedi verso i Sassi
                 </button>
             </div>
@@ -1395,6 +1395,9 @@
         </div>
 
         <button class="floating-btn" onclick="openMap()" title="Apri mappa">📍</button>
+        
+        <!-- Pulsante test navigazione (solo per debug) -->
+        <button onclick="testNavigation()" style="position:fixed;bottom:20px;left:20px;width:40px;height:40px;background:#333;color:white;border:none;border-radius:50%;font-size:12px;z-index:1001;cursor:pointer;" title="Test navigazione">🧭</button>
     </div>
 
     <script>
@@ -1710,6 +1713,9 @@
         function openDetail(itemId) {
             const detailPage = document.getElementById(`detail-${itemId}`);
             if (detailPage) {
+                // Aggiungi stato alla cronologia del browser
+                history.pushState({ detail: itemId }, '', `#${itemId}`);
+                
                 detailPage.classList.add('active');
                 document.body.style.overflow = 'hidden';
                 
@@ -1745,6 +1751,23 @@
                 page.classList.remove('active');
             });
             document.body.style.overflow = 'auto';
+            
+            // Torna alla pagina principale senza aggiungere storia
+            if (window.location.hash) {
+                history.replaceState(null, '', window.location.pathname);
+            }
+        }
+
+        // Gestisce il pulsante indietro del browser
+        function handleBrowserBack(event) {
+            const hasOpenDetail = document.querySelector('.detail-page.active');
+            
+            if (hasOpenDetail) {
+                // Se c'è un dettaglio aperto, chiudilo
+                closeDetail();
+                event.preventDefault();
+            }
+            // Se non ci sono dettagli aperti, lascia che il browser gestisca normalmente
         }
 
         // Naviga verso attrazione o parcheggio
@@ -1752,37 +1775,90 @@
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             const isAndroid = /Android/.test(navigator.userAgent);
             
-            let travelMode = '';
-            let avoidOptions = '';
-            
-            if (mode === 'driving') {
-                travelMode = '&travelmode=driving';
-                avoidOptions = '&avoid=tolls'; // Evita pedaggi e preferisce strade alternative
-            } else {
-                travelMode = '&travelmode=walking';
-            }
+            console.log(`🧭 Navigazione ${mode} verso: ${name} (${lat}, ${lng})`);
             
             if (isIOS) {
-                // Apple Maps con modalità specificata
+                // Apple Maps su iOS
                 if (mode === 'driving') {
-                    window.open(`maps://maps.google.com/maps?daddr=${lat},${lng}&dirflg=d`);
+                    // Navigazione in auto
+                    window.open(`maps://?daddr=${lat},${lng}&dirflg=d`);
                 } else {
-                    window.open(`maps://maps.google.com/maps?daddr=${lat},${lng}&dirflg=w`);
+                    // Navigazione a piedi
+                    window.open(`maps://?daddr=${lat},${lng}&dirflg=w`);
                 }
             } else if (isAndroid) {
-                // Google Maps Android con modalità
+                // Google Maps su Android
                 if (mode === 'driving') {
-                    window.open(`google.navigation:q=${lat},${lng}&mode=d`);
+                    // Navigazione in auto - evita ZTL quando possibile
+                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&avoid=tolls`);
                 } else {
-                    window.open(`google.navigation:q=${lat},${lng}&mode=w`);
+                    // Navigazione a piedi
+                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`);
                 }
             } else {
-                // Google Maps web con opzioni complete
-                const baseUrl = 'https://www.google.com/maps/dir/?api=1';
-                const destination = `&destination=${lat},${lng}`;
-                const placeName = `&destination_place_id=${encodeURIComponent(name)}`;
-                window.open(baseUrl + destination + travelMode + avoidOptions + placeName);
+                // Browser desktop/mobile - Google Maps
+                let url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+                
+                if (mode === 'driving') {
+                    url += `&travelmode=driving&avoid=tolls`;
+                } else {
+                    url += `&travelmode=walking`;
+                }
+                
+                // Aggiungi nome destinazione per migliore riconoscimento
+                url += `&destination_place_id=${encodeURIComponent(name)}`;
+                
+                window.open(url);
             }
+            
+            // Feedback visivo per conferma
+            showNavigationFeedback(mode, name);
+        }
+
+        // Mostra feedback di navigazione
+        function showNavigationFeedback(mode, name) {
+            const modeIcon = mode === 'driving' ? '🚗' : '🚶‍♂️';
+            const modeText = mode === 'driving' ? 'auto' : 'piedi';
+            
+            // Crea elemento di feedback temporaneo
+            const feedback = document.createElement('div');
+            feedback.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 12px;
+                font-size: 16px;
+                z-index: 10000;
+                text-align: center;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            
+            feedback.innerHTML = `
+                ${modeIcon} Navigazione ${modeText}<br>
+                <small>verso ${name}</small>
+            `;
+            
+            document.body.appendChild(feedback);
+            
+            // Rimuovi dopo 2 secondi
+            setTimeout(() => {
+                if (feedback.parentNode) {
+                    feedback.parentNode.removeChild(feedback);
+                }
+            }, 2000);
+        }
+
+        // Test funzione navigazione (per debug)
+        function testNavigation() {
+            console.log('=== TEST NAVIGAZIONE ===');
+            console.log('User Agent:', navigator.userAgent);
+            console.log('È iOS:', /iPad|iPhone|iPod/.test(navigator.userAgent));
+            console.log('È Android:', /Android/.test(navigator.userAgent));
+            console.log('========================');
         }
         function showTab(tabName) {
             // Nasconde tutti i contenuti
@@ -1866,6 +1942,28 @@
             // Inizializza GPS
             initializeGPS();
             
+            // Gestione del pulsante indietro del browser
+            window.addEventListener('popstate', function(event) {
+                const hasOpenDetail = document.querySelector('.detail-page.active');
+                
+                if (hasOpenDetail) {
+                    // Chiudi il dettaglio aperto
+                    closeDetail();
+                } else if (event.state && event.state.detail) {
+                    // Se c'è uno stato di dettaglio, aprilo
+                    openDetail(event.state.detail);
+                }
+            });
+            
+            // Gestione iniziale URL con hash
+            if (window.location.hash) {
+                const itemId = window.location.hash.substring(1);
+                const detailElement = document.getElementById(`detail-${itemId}`);
+                if (detailElement) {
+                    setTimeout(() => openDetail(itemId), 100);
+                }
+            }
+            
             // Aggiunge effetti di hover per migliorare l'esperienza utente
             const cards = document.querySelectorAll('.attraction-card, .parking-card');
             cards.forEach(card => {
@@ -1880,9 +1978,18 @@
                 });
             });
 
-            // Gestione tasto indietro per chiudere dettagli
-            window.addEventListener('popstate', function() {
-                closeDetail();
+            // Prevenzione uscita accidentale dall'app
+            window.addEventListener('beforeunload', function(event) {
+                const hasOpenDetail = document.querySelector('.detail-page.active');
+                if (hasOpenDetail) {
+                    // Non mostrare l'avviso se c'è un dettaglio aperto
+                    return;
+                }
+                
+                // Mostra avviso solo se l'utente sta veramente uscendo dall'app
+                if (event.target.activeElement && event.target.activeElement.tagName === 'A') {
+                    return; // Link interno, non avvisare
+                }
             });
         });
     </script>
