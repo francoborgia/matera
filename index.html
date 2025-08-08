@@ -382,6 +382,110 @@
             color: #4caf50;
         }
 
+        .weather-widget {
+            background: linear-gradient(135deg, #87CEEB, #4682B4);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .weather-current {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .weather-icon {
+            font-size: 48px;
+            margin-right: 15px;
+        }
+
+        .weather-info {
+            flex: 1;
+        }
+
+        .weather-temp {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .weather-desc {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .weather-detail {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .weather-hourly {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+        }
+
+        .weather-hourly-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .weather-hour {
+            display: inline-block;
+            text-align: center;
+            margin-right: 15px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 8px;
+            border-radius: 8px;
+            min-width: 60px;
+        }
+
+        .weather-hour-time {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .weather-hour-icon {
+            font-size: 20px;
+            margin: 5px 0;
+        }
+
+        .weather-hour-temp {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .weather-loading {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .weather-error {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #d63031;
+        }
+
         .ztl-warning {
             background: #fff3cd;
             border: 1px solid #ffeaa7;
@@ -422,6 +526,13 @@
             <!-- Status Localizzazione -->
             <div class="location-status" id="location-status">
                 <span class="distance-calculating">📍 Attivazione GPS per calcolo distanze...</span>
+            </div>
+
+            <!-- Widget Meteo -->
+            <div id="weather-container">
+                <div class="weather-loading" id="weather-loading">
+                    <div>🌤️ Caricamento meteo di Matera...</div>
+                </div>
             </div>
 
             <!-- Sezione Attrazioni -->
@@ -546,6 +657,13 @@
 
             <!-- Sezione Parcheggi -->
             <div id="parking-content" class="hidden">
+                <!-- Widget Meteo -->
+                <div id="weather-container-parking">
+                    <div class="weather-loading">
+                        <div>🌤️ Meteo Matera...</div>
+                    </div>
+                </div>
+                
                 <input type="text" class="search-box" placeholder="🔍 Cerca parcheggi..." oninput="filterContent(this.value, 'parking')">
                 
                 <div class="filter-buttons">
@@ -631,6 +749,13 @@
 
             <!-- Sezione Elettrico -->
             <div id="electric-content" class="hidden">
+                <!-- Widget Meteo -->
+                <div id="weather-container-electric">
+                    <div class="weather-loading">
+                        <div>🌤️ Meteo Matera...</div>
+                    </div>
+                </div>
+                
                 <input type="text" class="search-box" placeholder="🔍 Cerca stazioni elettriche..." oninput="filterContent(this.value, 'electric')">
                 
                 <div class="filter-buttons">
@@ -1402,6 +1527,7 @@
 
     <script>
         let userLocation = null;
+        let weatherData = null;
         
         // Coordinate delle attrazioni e punti di interesse
         const attractions = {
@@ -1424,6 +1550,264 @@
             'tesla-supercharger': { lat: 40.6450, lng: 16.5890, inZTL: false },
             'ionity-a16': { lat: 40.7125, lng: 16.5245, inZTL: false }
         };
+
+        // ===== SISTEMA METEO =====
+        
+        // Ottieni icona meteo in base alle condizioni
+        function getWeatherIcon(condition, isDay = true) {
+            const icons = {
+                'clear': isDay ? '☀️' : '🌙',
+                'clouds': isDay ? '⛅' : '☁️',
+                'rain': '🌧️',
+                'drizzle': '🌦️',
+                'thunderstorm': '⛈️',
+                'snow': '❄️',
+                'mist': '🌫️',
+                'fog': '🌫️'
+            };
+            return icons[condition] || '☀️';
+        }
+
+        // Simula dati meteo realistici per Matera
+        function generateWeatherData(lat, lng) {
+            const now = new Date();
+            const hour = now.getHours();
+            const isDay = hour >= 6 && hour <= 20;
+            
+            // Condizioni meteo realistiche per Matera in agosto
+            const conditions = ['clear', 'clouds', 'clouds', 'clear', 'clear'];
+            const currentCondition = conditions[Math.floor(Math.random() * conditions.length)];
+            
+            // Temperature estive tipiche di Matera
+            const baseTemp = 28 + Math.random() * 8; // 28-36°C di giorno
+            const nightAdjustment = isDay ? 0 : -8; // Più fresco di notte
+            const currentTemp = Math.round(baseTemp + nightAdjustment);
+            
+            const weatherData = {
+                current: {
+                    temp: currentTemp,
+                    condition: currentCondition,
+                    description: getWeatherDescription(currentCondition),
+                    humidity: Math.round(45 + Math.random() * 20), // 45-65%
+                    windSpeed: Math.round(5 + Math.random() * 10), // 5-15 km/h
+                    pressure: Math.round(1010 + Math.random() * 20), // 1010-1030 hPa
+                    icon: getWeatherIcon(currentCondition, isDay)
+                },
+                hourly: []
+            };
+            
+            // Genera previsioni orarie per le prossime 8 ore
+            for (let i = 1; i <= 8; i++) {
+                const futureHour = new Date(now.getTime() + (i * 60 * 60 * 1000));
+                const futureHourNum = futureHour.getHours();
+                const futureIsDay = futureHourNum >= 6 && futureHourNum <= 20;
+                
+                const tempVariation = (Math.random() - 0.5) * 4; // ±2°C
+                const hourTemp = Math.round(currentTemp + tempVariation);
+                
+                const hourCondition = i < 4 ? currentCondition : 
+                    conditions[Math.floor(Math.random() * conditions.length)];
+                
+                weatherData.hourly.push({
+                    time: futureHour.getHours().toString().padStart(2, '0') + ':00',
+                    temp: hourTemp,
+                    condition: hourCondition,
+                    icon: getWeatherIcon(hourCondition, futureIsDay)
+                });
+            }
+            
+            return weatherData;
+        }
+
+        // Descrizioni meteo in italiano
+        function getWeatherDescription(condition) {
+            const descriptions = {
+                'clear': 'Sereno',
+                'clouds': 'Nuvoloso',
+                'rain': 'Pioggia',
+                'drizzle': 'Pioggerellina', 
+                'thunderstorm': 'Temporale',
+                'snow': 'Neve',
+                'mist': 'Nebbia',
+                'fog': 'Nebbia fitta'
+            };
+            return descriptions[condition] || 'Sereno';
+        }
+
+        // Ottieni dati meteo (con possibilità di API reale)
+        async function fetchWeatherData(lat, lng) {
+            // OPZIONE 1: API reale OpenWeatherMap (GRATUITA)
+            // 1. Vai su: https://openweathermap.org/api
+            // 2. Registrati gratis e ottieni la tua API key
+            // 3. Decommentare il codice qui sotto e inserire la tua chiave
+            /*
+            const API_KEY = 'YOUR_OPENWEATHER_API_KEY_HERE';
+            const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lng}&appid=${API_KEY}&units=metric&lang=it&exclude=minutely,alerts`;
+            
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    return {
+                        current: {
+                            temp: Math.round(data.current.temp),
+                            condition: data.current.weather[0].main.toLowerCase(),
+                            description: data.current.weather[0].description,
+                            humidity: data.current.humidity,
+                            windSpeed: Math.round(data.current.wind_speed * 3.6), // m/s to km/h
+                            pressure: data.current.pressure,
+                            icon: getWeatherIcon(data.current.weather[0].main.toLowerCase(), 
+                                               data.current.dt > data.current.sunrise && 
+                                               data.current.dt < data.current.sunset)
+                        },
+                        hourly: data.hourly.slice(1, 9).map(hour => ({
+                            time: new Date(hour.dt * 1000).getHours().toString().padStart(2, '0') + ':00',
+                            temp: Math.round(hour.temp),
+                            condition: hour.weather[0].main.toLowerCase(),
+                            icon: getWeatherIcon(hour.weather[0].main.toLowerCase(), 
+                                               hour.dt > data.current.sunrise && 
+                                               hour.dt < data.current.sunset)
+                        }))
+                    };
+                }
+            } catch (error) {
+                console.log('API meteo non disponibile, uso dati simulati');
+            }
+            */
+            
+            // OPZIONE 2: Dati simulati realistici per demo (attualmente attiva)
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Simula caricamento API
+            return generateWeatherData(lat, lng);
+        }
+
+        // Mostra widget meteo
+        function displayWeather(weather) {
+            const containers = [
+                'weather-container',
+                'weather-container-parking', 
+                'weather-container-electric'
+            ];
+            
+            const weatherHTML = `
+                <div class="weather-widget">
+                    <div class="weather-current">
+                        <div class="weather-icon">${weather.current.icon}</div>
+                        <div class="weather-info">
+                            <div class="weather-temp">${weather.current.temp}°C</div>
+                            <div class="weather-desc">${weather.current.description}</div>
+                        </div>
+                        <button onclick="refreshWeather()" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:8px;border-radius:6px;cursor:pointer;font-size:12px;" title="Aggiorna meteo">
+                            🔄
+                        </button>
+                    </div>
+                    
+                    <div class="weather-details">
+                        <div class="weather-detail">
+                            <div>💧 Umidità</div>
+                            <div><strong>${weather.current.humidity}%</strong></div>
+                        </div>
+                        <div class="weather-detail">
+                            <div>💨 Vento</div>
+                            <div><strong>${weather.current.windSpeed} km/h</strong></div>
+                        </div>
+                        <div class="weather-detail">
+                            <div>🌡️ Pressione</div>
+                            <div><strong>${weather.current.pressure} hPa</strong></div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-hourly">
+                        <div class="weather-hourly-title">Prossime ore</div>
+                        ${weather.hourly.map(hour => `
+                            <div class="weather-hour">
+                                <div class="weather-hour-time">${hour.time}</div>
+                                <div class="weather-hour-icon">${hour.icon}</div>
+                                <div class="weather-hour-temp">${hour.temp}°</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Aggiorna tutti i container meteo
+            containers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = weatherHTML;
+                }
+            });
+        }
+
+        // Mostra errore meteo
+        function displayWeatherError(message) {
+            const containers = [
+                'weather-container',
+                'weather-container-parking', 
+                'weather-container-electric'
+            ];
+            
+            const errorHTML = `
+                <div class="weather-error">
+                    <strong>⚠️ Meteo non disponibile</strong><br>
+                    <small>${message}</small>
+                    <button onclick="refreshWeather()" style="margin-left:10px;padding:5px 10px;background:#d63031;color:white;border:none;border-radius:4px;cursor:pointer;">
+                        🔄 Riprova
+                    </button>
+                </div>
+            `;
+            
+            containers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = errorHTML;
+                }
+            });
+        }
+
+        // Carica meteo per la posizione
+        async function loadWeather(lat, lng) {
+            const loadingElement = document.getElementById('weather-loading');
+            if (loadingElement) {
+                loadingElement.innerHTML = '<div>🌤️ Caricamento meteo...</div>';
+            }
+            
+            try {
+                weatherData = await fetchWeatherData(lat, lng);
+                displayWeather(weatherData);
+                console.log('✅ Meteo caricato con successo');
+            } catch (error) {
+                console.error('Errore caricamento meteo:', error);
+                displayWeatherError('Impossibile caricare i dati meteo');
+            }
+        }
+
+        // Carica meteo per Matera (coordinate di default)
+        function loadDefaultWeather() {
+            console.log('📍 Caricamento meteo per Matera (posizione predefinita)');
+            loadWeather(40.6663, 16.6107); // Coordinate centro Matera
+        }
+
+        // Aggiorna meteo manualmente
+        function refreshWeather() {
+            if (userLocation) {
+                console.log('🔄 Aggiornamento meteo...');
+                loadWeather(userLocation.lat, userLocation.lng);
+            } else {
+                loadDefaultWeather();
+            }
+        }
+
+        // Aggiornamento meteo automatico ogni 30 minuti
+        function startWeatherUpdates() {
+            setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    refreshWeather();
+                    console.log('🔄 Aggiornamento meteo automatico');
+                }
+            }, 30 * 60 * 1000); // 30 minuti
+        }
+
+        // ===== FINE SISTEMA METEO =====
 
         // Inizializzazione GPS
         function initializeGPS() {
@@ -1707,6 +2091,9 @@
                 `<span class="distance-ready">📍 Posizione impostata: ${locationName} - Distanze calcolate</span>`;
             
             calculateAllDistances();
+            
+            // Carica meteo per la posizione selezionata
+            loadWeather(lat, lng);
         }
 
         // Apri pagina di dettaglio (attrazioni, parcheggi, colonnine)
@@ -1742,6 +2129,19 @@
                         }
                     }
                 }
+                
+                // Verifica che il pulsante di navigazione sia visibile
+                setTimeout(() => {
+                    const navButton = detailPage.querySelector('.navigate-btn');
+                    if (navButton) {
+                        console.log(`✅ Pulsante navigazione trovato in ${itemId}`);
+                        // Assicura che sia visibile dopo un po'
+                        setTimeout(scrollToNavigationButton, 500);
+                    } else {
+                        console.warn(`⚠️ Pulsante navigazione NON trovato in ${itemId}`);
+                        checkNavigationButtons();
+                    }
+                }, 100);
             }
         }
 
@@ -1860,6 +2260,63 @@
             console.log('È Android:', /Android/.test(navigator.userAgent));
             console.log('========================');
         }
+
+        // Verifica presenza pulsanti navigazione
+        function checkNavigationButtons() {
+            const expectedButtons = [
+                'detail-duomo',
+                'detail-sassi', 
+                'detail-san-pietro',
+                'detail-musma',
+                'detail-belvedere',
+                'detail-casa-grotta'
+            ];
+            
+            expectedButtons.forEach(pageId => {
+                const page = document.getElementById(pageId);
+                if (page) {
+                    const navButton = page.querySelector('.navigate-btn');
+                    if (!navButton) {
+                        console.warn(`⚠️ Pulsante navigazione mancante in: ${pageId}`);
+                        
+                        // Crea pulsante mancante
+                        const newButton = document.createElement('button');
+                        newButton.className = 'navigate-btn';
+                        newButton.innerHTML = '🚶‍♂️ Naviga a piedi (ripristinato automaticamente)';
+                        newButton.onclick = function() {
+                            alert('Pulsante ripristinato automaticamente - aggiorna l\'app');
+                        };
+                        
+                        const content = page.querySelector('.detail-content');
+                        if (content) {
+                            content.appendChild(newButton);
+                        }
+                    } else {
+                        console.log(`✅ Pulsante navigazione OK in: ${pageId}`);
+                    }
+                }
+            });
+        }
+
+        // Forza scroll al pulsante se nascosto
+        function scrollToNavigationButton() {
+            const activeDetail = document.querySelector('.detail-page.active');
+            if (activeDetail) {
+                const navButton = activeDetail.querySelector('.navigate-btn');
+                if (navButton) {
+                    // Controlla se il pulsante è visibile
+                    const rect = navButton.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    
+                    if (rect.bottom > windowHeight || rect.top < 0) {
+                        navButton.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'end' 
+                        });
+                    }
+                }
+            }
+        }
         function showTab(tabName) {
             // Nasconde tutti i contenuti
             document.getElementById('attractions-content').classList.add('hidden');
@@ -1939,8 +2396,14 @@
 
         // Inizializzazione app
         document.addEventListener('DOMContentLoaded', function() {
-            // Inizializza GPS
+            // Inizializza GPS e meteo
             initializeGPS();
+            
+            // Avvia aggiornamenti meteo automatici
+            startWeatherUpdates();
+            
+            // Verifica presenza pulsanti navigazione
+            setTimeout(checkNavigationButtons, 1000);
             
             // Gestione del pulsante indietro del browser
             window.addEventListener('popstate', function(event) {
