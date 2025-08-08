@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matera Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 10px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab.active {
+            background: white;
+            border-bottom-color: #8B4513;
+            color: #8B4513;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px;
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .attraction-card, .parking-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .attraction-card:hover, .parking-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .attraction-icon {
+            background: #8B4513;
+            color: white;
+        }
+
+        .parking-icon {
+            background: #28a745;
+            color: white;
+        }
+
+        .electric-icon {
+            background: #007bff;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .card-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .info-tag {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .info-tag.free {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .info-tag.paid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .info-tag.electric {
+            background: #cce7ff;
+            color: #004085;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: #8B4513;
+            color: white;
+            border-color: #8B4513;
+        }
+
+        .distance-info {
+            font-size: 12px;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .rating {
+            color: #ffc107;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: #8B4513;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .detail-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .detail-page.active {
+            transform: translateX(0);
+        }
+
+        .detail-header {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .detail-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+        .detail-content {
+            padding: 20px;
+        }
+
+        .detail-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .detail-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .detail-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-item-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .info-item-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .info-item-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .navigate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .navigate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(40,167,69,0.3);
+        }
+
+        .location-status {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: center;
+            border-left: 4px solid #2196f3;
+        }
+
+        .distance-calculating {
+            color: #ff9800;
+        }
+
+        .distance-ready {
+            color: #4caf50;
+        }
+
+        .ztl-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .ztl-warning h4 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .ztl-warning p {
+            color: #856404;
+            font-size: 13px;
+            margin: 0;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>🏛️ Matera Guide</h1>
+            <p>Scopri la Città dei Sassi</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('attractions')">🏛️ Attrazioni</button>
+            <button class="nav-tab" onclick="showTab('parking')">🅿️ Parcheggi</button>
+            <button class="nav-tab" onclick="showTab('electric')">🔌 Elettrico</button>
+        </div>
+
+        <div class="content">
+            <!-- Status Localizzazione -->
+            <div class="location-status" id="location-status">
+                <span class="distance-calculating">📍 Attivazione GPS per calcolo distanze...</span>
+            </div>
+
+            <!-- Sezione Attrazioni -->
+            <div id="attractions-content">
+                <input type="text" class="search-box" placeholder="🔍 Cerca attrazioni..." oninput="filterContent(this.value, 'attraction')">
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByType('all', 'attraction')">Tutti</button>
+                    <button class="filter-btn" onclick="filterByType('chiesa', 'attraction')">Chiese</button>
+                    <button class="filter-btn" onclick="filterByType('museo', 'attraction')">Musei</button>
+                    <button class="filter-btn" onclick="filterByType('panorama', 'attraction')">Panorami</button>
+                </div>
+
+                <div class="attraction-card" data-type="chiesa" data-id="duomo" onclick="openDetail('duomo')">
+                    <div class="card-header">
+                        <div class="card-icon attraction-icon">⛪</div>
+                        <div>
+                            <div class="card-title">Duomo di Matera</div>
+                            <div class="card-subtitle">Chiesa principale • Centro Storico</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Cattedrale romanico-pugliese del XIII secolo, simbolo della città. Affreschi medievali e vista panoramica sui Sassi.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag free">Ingresso gratuito</span>
+                        <span class="info-tag">⭐ 4.6</span>
+                        <span class="distance-info" id="distance-duomo">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card" data-type="chiesa" data-id="sassi" onclick="openDetail('sassi')">
+                    <div class="card-header">
+                        <div class="card-icon attraction-icon">🗿</div>
+                        <div>
+                            <div class="card-title">Sassi di Matera</div>
+                            <div class="card-subtitle">Patrimonio UNESCO • Sito archeologico</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Antica città scavata nella roccia, patrimonio UNESCO dal 1993. Abitazioni rupestri e chiese bizantine.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag">Visite guidate disponibili</span>
+                        <span class="info-tag">⭐ 4.8</span>
+                        <span class="distance-info" id="distance-sassi">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card" data-type="chiesa" data-id="san-pietro" onclick="openDetail('san-pietro')">
+                    <div class="card-header">
+                        <div class="card-icon attraction-icon">⛪</div>
+                        <div>
+                            <div class="card-title">Chiesa di San Pietro Caveoso</div>
+                            <div class="card-subtitle">Chiesa rupestre • Sasso Caveoso</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Chiesa del XIII secolo scavata nella roccia, con splendidi affreschi bizantini e vista panoramica.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag paid">€ 3</span>
+                        <span class="info-tag">⭐ 4.4</span>
+                        <span class="distance-info" id="distance-san-pietro">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card" data-type="museo" data-id="musma" onclick="openDetail('musma')">
+                    <div class="card-header">
+                        <div class="card-icon attraction-icon">🏛️</div>
+                        <div>
+                            <div class="card-title">MUSMA - Museo Scultura</div>
+                            <div class="card-subtitle">Museo d'arte • Palazzo Pomarici</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Primo museo al mondo in grotta dedicato alla scultura, con opere contemporanee in ambienti rupestri.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag paid">€ 7</span>
+                        <span class="info-tag">⭐ 4.3</span>
+                        <span class="distance-info" id="distance-musma">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card" data-type="panorama" data-id="belvedere" onclick="openDetail('belvedere')">
+                    <div class="card-header">
+                        <div class="card-icon attraction-icon">🌅</div>
+                        <div>
+                            <div class="card-title">Belvedere Murgia Timone</div>
+                            <div class="card-subtitle">Punto panoramico • Parco Murgia</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Vista panoramica mozzafiato sui Sassi e sulla Gravina. Ideale per fotografie al tramonto.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag free">Accesso libero</span>
+                        <span class="info-tag">⭐ 4.7</span>
+                        <span class="distance-info" id="distance-belvedere">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card" data-type="museo" data-id="casa-grotta" onclick="openDetail('casa-grotta')">
+                    <div class="card-header">
+                        <div class="card-icon attraction-icon">🏺</div>
+                        <div>
+                            <div class="card-title">Casa Grotta di Vico Solitario</div>
+                            <div class="card-subtitle">Museo etnografico • Sasso Caveoso</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Ricostruzione fedele di una abitazione contadina nei Sassi, con arredi e utensili originali.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag paid">€ 3</span>
+                        <span class="info-tag">⭐ 4.2</span>
+                        <span class="distance-info" id="distance-casa-grotta">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione Parcheggi -->
+            <div id="parking-content" class="hidden">
+                <input type="text" class="search-box" placeholder="🔍 Cerca parcheggi..." oninput="filterContent(this.value, 'parking')">
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByType('all', 'parking')">Tutti</button>
+                    <button class="filter-btn" onclick="filterByType('free', 'parking')">Gratuiti</button>
+                    <button class="filter-btn" onclick="filterByType('paid', 'parking')">A pagamento</button>
+                    <button class="filter-btn" onclick="filterByType('covered', 'parking')">Coperti</button>
+                </div>
+
+                <div class="parking-card" data-type="paid" data-id="parking-lucana" onclick="openDetail('parking-lucana')">
+                    <div class="card-header">
+                        <div class="card-icon parking-icon">🅿️</div>
+                        <div>
+                            <div class="card-title">Parcheggio Via Lucana</div>
+                            <div class="card-subtitle">Centro storico • 150 posti auto</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Parcheggio a pagamento vicino al centro storico, comodo per visitare i Sassi a piedi.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag paid">€ 1,50/ora</span>
+                        <span class="info-tag">🕐 8:00-20:00</span>
+                        <span class="distance-info" id="distance-parking-lucana">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="parking-card" data-type="free" data-id="parking-lanera" onclick="openDetail('parking-lanera')">
+                    <div class="card-header">
+                        <div class="card-icon parking-icon">🅿️</div>
+                        <div>
+                            <div class="card-title">Parcheggio Lanera</div>
+                            <div class="card-subtitle">Periferia • 200 posti auto</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Ampio parcheggio gratuito con navetta per il centro. Ideale per soste lunghe.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag free">Gratuito</span>
+                        <span class="info-tag">🚐 Navetta disponibile</span>
+                        <span class="distance-info" id="distance-parking-lanera">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="parking-card" data-type="covered" data-id="parking-centro" onclick="openDetail('parking-centro')">
+                    <div class="card-header">
+                        <div class="card-icon parking-icon">🏢</div>
+                        <div>
+                            <div class="card-title">Parking Multipiano Centro</div>
+                            <div class="card-subtitle">Coperto • 120 posti auto</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Parcheggio coperto su 3 piani, sicuro e climatizzato. Ascensore e servizi.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag paid">€ 2/ora</span>
+                        <span class="info-tag">🏢 Coperto</span>
+                        <span class="info-tag" style="background:#ffeaa7;color:#d63031;">⚠️ In ZTL</span>
+                        <span class="distance-info" id="distance-parking-centro">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="parking-card" data-type="paid" data-id="parking-veneto" onclick="openDetail('parking-veneto')">
+                    <div class="card-header">
+                        <div class="card-icon parking-icon">🅿️</div>
+                        <div>
+                            <div class="card-title">Piazza Vittorio Veneto</div>
+                            <div class="card-subtitle">Strisce blu • 80 posti auto</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Parcheggio su strada nel cuore della città nuova, vicino a negozi e ristoranti.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag paid">€ 1/ora</span>
+                        <span class="info-tag">🕐 9:00-13:00, 16:00-20:00</span>
+                        <span class="distance-info" id="distance-parking-veneto">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione Elettrico -->
+            <div id="electric-content" class="hidden">
+                <input type="text" class="search-box" placeholder="🔍 Cerca stazioni elettriche..." oninput="filterContent(this.value, 'electric')">
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByType('all', 'electric')">Tutte</button>
+                    <button class="filter-btn" onclick="filterByType('fast', 'electric')">Ricarica Rapida</button>
+                    <button class="filter-btn" onclick="filterByType('free-parking', 'electric')">Parcheggio Gratis</button>
+                </div>
+
+                <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #2196f3;">
+                    <h3 style="color: #1976d2; margin-bottom: 8px;">ℹ️ Info Veicoli Elettrici</h3>
+                    <p style="font-size: 14px; color: #333; margin-bottom: 5px;">• <strong>Strisce blu:</strong> Parcheggio GRATUITO per veicoli 100% elettrici (targa con E finale)</p>
+                    <p style="font-size: 14px; color: #333;">• Necessario esporre disco orario o app di parcheggio per identificazione</p>
+                </div>
+
+                <div class="parking-card" data-type="fast" data-id="enel-corso" onclick="openDetail('enel-corso')">
+                    <div class="card-header">
+                        <div class="card-icon electric-icon">⚡</div>
+                        <div>
+                            <div class="card-title">Enel X - Via del Corso</div>
+                            <div class="card-subtitle">Ricarica veloce • 22kW</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Stazione di ricarica veloce Enel X con 4 colonnine. Tipo 2 e CCS. Pagamento con app o carta.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag electric">22kW Fast</span>
+                        <span class="info-tag">💳 Enel X App</span>
+                        <span class="info-tag free-parking">Parcheggio incluso</span>
+                        <span class="distance-info" id="distance-enel-corso">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="parking-card" data-type="free-parking" data-id="be-charge-lanera" onclick="openDetail('be-charge-lanera')">
+                    <div class="card-header">
+                        <div class="card-icon electric-icon">🔋</div>
+                        <div>
+                            <div class="card-title">Be Charge - Parcheggio Lanera</div>
+                            <div class="card-subtitle">Ricarica standard • 7kW</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Colonnine nel parcheggio gratuito Lanera. Ricarica lenta ideale per soste lunghe durante la visita.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag">7kW Standard</span>
+                        <span class="info-tag">💳 Be Charge App</span>
+                        <span class="info-tag free-parking">Parcheggio GRATUITO</span>
+                        <span class="distance-info" id="distance-be-charge-lanera">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="parking-card" data-type="fast" data-id="tesla-supercharger" onclick="openDetail('tesla-supercharger')">
+                    <div class="card-header">
+                        <div class="card-icon electric-icon">⚡</div>
+                        <div>
+                            <div class="card-title">Tesla Supercharger</div>
+                            <div class="card-subtitle">Solo Tesla • 150kW</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Stazione Tesla Supercharger ad alta velocità. Riservata solo ai veicoli Tesla.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag electric">150kW Ultra Fast</span>
+                        <span class="info-tag">🚗 Solo Tesla</span>
+                        <span class="info-tag paid">€ 0,39/kWh</span>
+                        <span class="distance-info" id="distance-tesla-supercharger">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="parking-card" data-type="free-parking" data-id="ionity-a16" onclick="openDetail('ionity-a16')">
+                    <div class="card-header">
+                        <div class="card-icon electric-icon">🔌</div>
+                        <div>
+                            <div class="card-title">Ionity - Area Servizi A16</div>
+                            <div class="card-subtitle">Autostrada • 350kW</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Stazione ultra-rapida sull'autostrada A16. Ideale per soste durante viaggi lunghi.
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag electric">350kW HPC</span>
+                        <span class="info-tag">💳 Ionity App</span>
+                        <span class="info-tag">🛣️ Autostrada</span>
+                        <span class="distance-info" id="distance-ionity-a16">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="parking-card" data-type="free-parking">
+                    <div class="card-header">
+                        <div class="card-icon parking-icon">🅿️</div>
+                        <div>
+                            <div class="card-title">Parcheggi Strisce Blu - Centro</div>
+                            <div class="card-subtitle">Veicoli elettrici • Gratuito</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Tutti i parcheggi a strisce blu del centro sono GRATUITI per veicoli 100% elettrici con targa finale "E".
+                    </div>
+                    <div class="card-info">
+                        <span class="info-tag free-parking">GRATUITO per elettrici</span>
+                        <span class="info-tag">📱 Disco orario necessario</span>
+                        <span class="info-tag">🏛️ Centro storico</span>
+                        <span class="distance-info">📍 Tutto il centro</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagine di Dettaglio -->
+        <div id="detail-duomo" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Duomo di Matera</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=200&fit=crop" alt="Duomo di Matera" class="detail-image">
+                
+                <div class="detail-title">Cattedrale di Matera</div>
+                <div class="detail-subtitle">Chiesa principale • Centro Storico</div>
+                
+                <div class="detail-description">
+                    La Cattedrale di Matera, dedicata alla Madonna della Bruna e a Sant'Eustachio, è un magnifico esempio di architettura romanico-pugliese del XIII secolo. Costruita tra il 1203 e il 1270, domina la città dai Sassi con la sua imponente facciata e il campanile alto 52 metri.
+                    
+                    All'interno si possono ammirare preziosi affreschi medievali, un coro ligneo del XV secolo e la cripta con colonne bizantine. Il rosone della facciata è considerato uno dei più belli della Puglia.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⏰</div>
+                        <div class="info-item-label">Orari</div>
+                        <div class="info-item-value">7:00-12:30<br>15:30-19:30</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo</div>
+                        <div class="info-item-value">Gratuito</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⭐</div>
+                        <div class="info-item-label">Valutazione</div>
+                        <div class="info-item-value">4.6/5</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-duomo">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6663, 16.6107, 'Duomo di Matera', 'walking')">
+                    🚶‍♂️ Naviga a piedi verso il Duomo
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-sassi" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Sassi di Matera</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1580911223461-2094ff2b8b42?w=400&h=200&fit=crop" alt="Sassi di Matera" class="detail-image">
+                
+                <div class="detail-title">I Sassi di Matera</div>
+                <div class="detail-subtitle">Patrimonio UNESCO • Sito archeologico</div>
+                
+                <div class="detail-description">
+                    I Sassi di Matera rappresentano uno dei più antichi insediamenti urbani al mondo, abitati ininterrottamente da oltre 9.000 anni. Questo straordinario complesso di case, chiese, monasteri e palazzi scavati direttamente nella roccia calcarea è stato dichiarato Patrimonio dell'Umanità UNESCO nel 1993.
+                    
+                    Divisi in Sasso Caveoso e Sasso Barisano, offrono un labirinto di vicoli, scalinate e terrazze che raccontano millenni di storia umana. Molte case-grotta sono oggi trasformate in hotel, ristoranti e musei.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">🕐</div>
+                        <div class="info-item-label">Accesso</div>
+                        <div class="info-item-value">24h</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo</div>
+                        <div class="info-item-value">Gratuito<br>(visite € 10)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⭐</div>
+                        <div class="info-item-label">Valutazione</div>
+                        <div class="info-item-value">4.8/5</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-sassi">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6669, 16.6089, 'Sassi di Matera', 'walking')">
+                    🚶‍♂️ Naviga a piedi verso i Sassi
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-san-pietro" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Chiesa San Pietro Caveoso</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1590948338392-26648dd25b76?w=400&h=200&fit=crop" alt="Chiesa San Pietro Caveoso" class="detail-image">
+                
+                <div class="detail-title">Chiesa di San Pietro Caveoso</div>
+                <div class="detail-subtitle">Chiesa rupestre • Sasso Caveoso</div>
+                
+                <div class="detail-description">
+                    La Chiesa di San Pietro Caveoso è una delle più affascinanti chiese rupestri di Matera, costruita nel XIII secolo su una precedente struttura del VIII secolo. Caratterizzata da un'architettura che mescola elementi romanici e bizantini, la chiesa offre uno dei panorami più suggestivi sui Sassi.
+                    
+                    All'interno sono conservati splendidi affreschi che risalgono al periodo bizantino e medievale, tra cui una Madonna con Bambino del XIV secolo. La facciata barocca del XVII secolo contrasta elegantemente con l'ambiente rupestre circostante.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⏰</div>
+                        <div class="info-item-label">Orari</div>
+                        <div class="info-item-value">9:00-13:00<br>15:00-18:00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo</div>
+                        <div class="info-item-value">€ 3</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⭐</div>
+                        <div class="info-item-label">Valutazione</div>
+                        <div class="info-item-value">4.4/5</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-san-pietro">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6655, 16.6095, 'Chiesa di San Pietro Caveoso', 'walking')">
+                    🚶‍♂️ Naviga a piedi verso San Pietro Caveoso
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-musma" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>MUSMA</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=400&h=200&fit=crop" alt="MUSMA Museo" class="detail-image">
+                
+                <div class="detail-title">MUSMA - Museo della Scultura</div>
+                <div class="detail-subtitle">Museo d'arte • Palazzo Pomarici</div>
+                
+                <div class="detail-description">
+                    Il MUSMA è il primo museo al mondo interamente dedicato alla scultura, situato nel suggestivo Palazzo Pomarici del XVII secolo e nelle grotte sottostanti. La collezione spazia dall'arte antica a quella contemporanea, con opere di artisti italiani e internazionali.
+                    
+                    Il percorso espositivo si snoda attraverso sale affrescate e ambienti rupestri, creando un dialogo unico tra architettura storica e arte contemporanea. Particolare attenzione è dedicata alla scultura del Novecento con opere di Fazzini, Consagra, Cascella e molti altri.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⏰</div>
+                        <div class="info-item-label">Orari</div>
+                        <div class="info-item-value">10:00-14:00<br>16:00-20:00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo</div>
+                        <div class="info-item-value">€ 7<br>(ridotto € 5)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⭐</div>
+                        <div class="info-item-label">Valutazione</div>
+                        <div class="info-item-value">4.3/5</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-musma">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6671, 16.6101, 'MUSMA - Museo della Scultura', 'walking')">
+                    🚶‍♂️ Naviga a piedi verso il MUSMA
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-belvedere" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Belvedere Murgia Timone</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1578321272199-d7737b65c021?w=400&h=200&fit=crop" alt="Belvedere Murgia Timone" class="detail-image">
+                
+                <div class="detail-title">Belvedere Murgia Timone</div>
+                <div class="detail-subtitle">Punto panoramico • Parco Murgia</div>
+                
+                <div class="detail-description">
+                    Il Belvedere di Murgia Timone offre la vista panoramica più spettacolare sui Sassi di Matera. Situato sul lato opposto della Gravina, questo punto di osservazione permette di ammirare l'intero complesso rupestre in tutta la sua magnificenza.
+                    
+                    È il luogo ideale per fotografie memorabili, soprattutto al tramonto quando la luce dorata illumina le antiche abitazioni scavate nella roccia. Il belvedere è raggiungibile a piedi attraverso un sentiero nel Parco della Murgia Materana, ricco di flora mediterranea e chiese rupestri.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">🕐</div>
+                        <div class="info-item-label">Accesso</div>
+                        <div class="info-item-value">24h<br>Consigliato alba/tramonto</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo</div>
+                        <div class="info-item-value">Gratuito</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⭐</div>
+                        <div class="info-item-label">Valutazione</div>
+                        <div class="info-item-value">4.7/5</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-belvedere">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6635, 16.6045, 'Belvedere Murgia Timone', 'walking')">
+                    🚶‍♂️ Naviga a piedi verso il Belvedere
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-casa-grotta" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Casa Grotta di Vico Solitario</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1578662996449-8c17c20b5a59?w=400&h=200&fit=crop" alt="Casa Grotta" class="detail-image">
+                
+                <div class="detail-title">Casa Grotta di Vico Solitario</div>
+                <div class="detail-subtitle">Museo etnografico • Sasso Caveoso</div>
+                
+                <div class="detail-description">
+                    La Casa Grotta di Vico Solitario è un museo etnografico che ricrea fedelmente l'ambiente di vita di una famiglia contadina nei Sassi fino agli anni '50. Questa abitazione rupestre mostra come vivevano le famiglie numerose in un unico ambiente condiviso anche con gli animali.
+                    
+                    Tutti gli arredi, utensili e oggetti esposti sono originali dell'epoca e testimoniano la vita quotidiana in condizioni di estrema povertà ma con grande dignità. La visita offre una comprensione profonda delle condizioni sociali che portarono allo sfollamento dei Sassi negli anni '50.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⏰</div>
+                        <div class="info-item-label">Orari</div>
+                        <div class="info-item-value">9:30-13:30<br>14:30-19:30</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo</div>
+                        <div class="info-item-value">€ 3<br>(gruppi € 2)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⭐</div>
+                        <div class="info-item-label">Valutazione</div>
+                        <div class="info-item-value">4.2/5</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-casa-grotta">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6661, 16.6087, 'Casa Grotta di Vico Solitario', 'walking')">
+                    🚶‍♂️ Naviga a piedi verso Casa Grotta
+                </button>
+            </div>
+        </div>
+
+        <!-- Pagine di Dettaglio Parcheggi -->
+        <div id="detail-parking-lucana" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Parcheggio Via Lucana</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1560441919-72fd3fb885de?w=400&h=200&fit=crop" alt="Parcheggio Via Lucana" class="detail-image">
+                
+                <div class="detail-title">Parcheggio Via Lucana</div>
+                <div class="detail-subtitle">Centro storico • 150 posti auto</div>
+                
+                <div class="detail-description">
+                    Parcheggio a pagamento strategicamente posizionato vicino al centro storico di Matera. Ideale per chi vuole visitare i Sassi a piedi senza dover camminare troppo. Il parcheggio è ben illuminato e custodito durante le ore diurne.
+                    
+                    Si trova a soli 5 minuti a piedi dal Duomo e dall'ingresso principale dei Sassi. Accetta pagamenti con monete, carte e app di parcheggio mobile.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⏰</div>
+                        <div class="info-item-label">Orari</div>
+                        <div class="info-item-value">8:00-20:00<br>€1,50/ora</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Tariffa</div>
+                        <div class="info-item-value">€ 1,50/ora<br>Max €12/giorno</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">🅿️</div>
+                        <div class="info-item-label">Posti</div>
+                        <div class="info-item-value">150 auto<br>Scoperto</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-parking-lucana">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6678, 16.6120, 'Parcheggio Via Lucana', 'driving')">
+                    🚗 Naviga in auto (evita ZTL)
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-parking-lanera" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Parcheggio Lanera</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=200&fit=crop" alt="Parcheggio Lanera" class="detail-image">
+                
+                <div class="detail-title">Parcheggio Lanera</div>
+                <div class="detail-subtitle">Periferia • 200 posti auto • GRATUITO</div>
+                
+                <div class="detail-description">
+                    Ampio parcheggio gratuito situato nella zona periferica di Matera, perfetto per soste lunghe. Dispone di navetta gratuita che collega il parcheggio al centro storico ogni 15 minuti durante le ore diurne.
+                    
+                    Il parcheggio è ben custodito e illuminato, con servizi igienici e area di sosta. Ideale per famiglie e per chi vuole risparmiare sui costi di parcheggio. La navetta ti porta direttamente in Piazza Vittorio Veneto.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">🚐</div>
+                        <div class="info-item-label">Navetta</div>
+                        <div class="info-item-value">Ogni 15 min<br>8:00-20:00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo</div>
+                        <div class="info-item-value">GRATUITO<br>24h/24</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">🅿️</div>
+                        <div class="info-item-label">Posti</div>
+                        <div class="info-item-value">200 auto<br>Custodito</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-parking-lanera">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6595, 16.5998, 'Parcheggio Lanera', 'driving')">
+                    🚗 Naviga in auto (parcheggio gratuito)
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-parking-centro" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Parking Multipiano Centro</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=400&h=200&fit=crop" alt="Parking Centro" class="detail-image">
+                
+                <div class="detail-title">Parking Multipiano Centro</div>
+                <div class="detail-subtitle">Coperto • 120 posti auto • IN ZTL ⚠️</div>
+                
+                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ffc107;">
+                    <h4 style="color: #856404; margin-bottom: 8px;">⚠️ ATTENZIONE ZTL</h4>
+                    <p style="font-size: 14px; color: #856404; margin: 0;">Questo parcheggio si trova all'interno della Zona a Traffico Limitato. Accesso permesso solo con autorizzazione o per raggiungere hotel/B&B nella zona.</p>
+                </div>
+                
+                <div class="detail-description">
+                    Parcheggio multipiano coperto nel cuore di Matera, a 3 piani con ascensore. Sicuro e climatizzato, dotato di servizi igienici e sistema di sorveglianza 24h. 
+                    
+                    <strong>IMPORTANTE:</strong> L'accesso è consentito solo se si soggiorna in strutture ricettive nella ZTL o con autorizzazione speciale. Verificare prima di recarsi sul posto per evitare multe.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">🏢</div>
+                        <div class="info-item-label">Tipologia</div>
+                        <div class="info-item-value">Coperto<br>3 piani</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Tariffa</div>
+                        <div class="info-item-value">€ 2/ora<br>€20/giorno</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⚠️</div>
+                        <div class="info-item-label">ZTL</div>
+                        <div class="info-item-value">Accesso<br>limitato</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-parking-centro">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6680, 16.6110, 'Parking Multipiano Centro', 'driving')" style="background: linear-gradient(135deg, #f39c12, #e74c3c);">
+                    🚗 Naviga in auto (SOLO se autorizzati per ZTL)
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-parking-veneto" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Piazza Vittorio Veneto</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop" alt="Piazza Vittorio Veneto" class="detail-image">
+                
+                <div class="detail-title">Piazza Vittorio Veneto</div>
+                <div class="detail-subtitle">Strisce blu • 80 posti auto</div>
+                
+                <div class="detail-description">
+                    Parcheggio su strada nella splendida Piazza Vittorio Veneto, il salotto della città nuova di Matera. Circondato da bar, ristoranti e negozi, è il punto di partenza ideale per esplorare sia la città moderna che i Sassi.
+                    
+                    Le strisce blu sono attive durante gli orari indicati. La sera e nei weekend è spesso gratuito. Da qui si raggiungono facilmente tutti i principali monumenti a piedi.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⏰</div>
+                        <div class="info-item-label">Orari</div>
+                        <div class="info-item-value">9:00-13:00<br>16:00-20:00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Tariffa</div>
+                        <div class="info-item-value">€ 1/ora<br>Gratis la sera</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">🏪</div>
+                        <div class="info-item-label">Servizi</div>
+                        <div class="info-item-value">Bar, negozi<br>ristoranti</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-parking-veneto">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6695, 16.6135, 'Piazza Vittorio Veneto', 'driving')">
+                    🚗 Naviga in auto verso Piazza Veneto
+                </button>
+            </div>
+        </div>
+
+        <!-- Pagine di Dettaglio Colonnine Elettriche -->
+        <div id="detail-enel-corso" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Enel X - Via del Corso</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=400&h=200&fit=crop" alt="Colonnina Enel X" class="detail-image">
+                
+                <div class="detail-title">Enel X - Via del Corso</div>
+                <div class="detail-subtitle">Ricarica veloce • 22kW • 4 colonnine</div>
+                
+                <div class="detail-description">
+                    Stazione di ricarica veloce Enel X con 4 punti di ricarica disponibili 24h/24. Supporta connettori Tipo 2 (ricarica AC) e CCS (ricarica DC) per la massima compatibilità con tutti i veicoli elettrici.
+                    
+                    Situata in posizione strategica vicino al centro, con parcheggio riservato incluso. Pagamento tramite app Enel X, carte contactless o badge RFID. Assistenza telefonica 24h in caso di problemi.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⚡</div>
+                        <div class="info-item-label">Potenza</div>
+                        <div class="info-item-value">22kW AC<br>Ricarica veloce</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">🔌</div>
+                        <div class="info-item-label">Connettori</div>
+                        <div class="info-item-value">Tipo 2<br>CCS</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💳</div>
+                        <div class="info-item-label">Pagamento</div>
+                        <div class="info-item-value">App Enel X<br>Carte</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-enel-corso">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6685, 16.6125, 'Enel X Via del Corso', 'driving')">
+                    🚗 Naviga in auto verso colonnina Enel X
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-be-charge-lanera" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Be Charge - Parcheggio Lanera</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=400&h=200&fit=crop" alt="Be Charge Lanera" class="detail-image">
+                
+                <div class="detail-title">Be Charge - Parcheggio Lanera</div>
+                <div class="detail-subtitle">Ricarica standard • 7kW • Parcheggio GRATUITO</div>
+                
+                <div class="detail-description">
+                    Colonnine di ricarica Be Charge situate nel parcheggio gratuito Lanera. Ideali per ricariche lente durante la visita prolungata di Matera. Il parcheggio è gratuito 24h/24 e sono disponibili servizi igienici e navetta per il centro.
+                    
+                    Perfetto per caricare l'auto mentre si visita la città con la navetta gratuita. La ricarica a 7kW permette di recuperare circa 40-50 km di autonomia per ogni ora di sosta.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">🔋</div>
+                        <div class="info-item-label">Potenza</div>
+                        <div class="info-item-value">7kW AC<br>Ricarica standard</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">🅿️</div>
+                        <div class="info-item-label">Parcheggio</div>
+                        <div class="info-item-value">GRATUITO<br>Custodito</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">🚐</div>
+                        <div class="info-item-label">Navetta</div>
+                        <div class="info-item-value">Ogni 15 min<br>per il centro</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-be-charge-lanera">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6595, 16.5998, 'Be Charge Parcheggio Lanera', 'driving')">
+                    🚗 Naviga verso Be Charge (parcheggio gratuito)
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-tesla-supercharger" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Tesla Supercharger</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?w=400&h=200&fit=crop" alt="Tesla Supercharger" class="detail-image">
+                
+                <div class="detail-title">Tesla Supercharger Matera</div>
+                <div class="detail-subtitle">Solo Tesla • 150kW • Ultra veloce</div>
+                
+                <div class="detail-description">
+                    Stazione Tesla Supercharger con ricarica ultra-veloce fino a 150kW, riservata esclusivamente ai veicoli Tesla. Permette di ricaricare dal 10% all'80% in circa 30-40 minuti.
+                    
+                    Situata in area commerciale con bar, ristoranti e servizi nelle vicinanze. Pagamento automatico tramite account Tesla collegato al veicolo. La stazione è aperta 24h/24 con illuminazione notturna e sorveglianza.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⚡</div>
+                        <div class="info-item-label">Potenza</div>
+                        <div class="info-item-value">150kW DC<br>Ultra veloce</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">🚗</div>
+                        <div class="info-item-label">Compatibilità</div>
+                        <div class="info-item-value">Solo Tesla<br>Tutti i modelli</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo</div>
+                        <div class="info-item-value">€ 0,39/kWh<br>Fatturazione auto</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-tesla-supercharger">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.6450, 16.5890, 'Tesla Supercharger Matera', 'driving')">
+                    🚗 Naviga verso Tesla Supercharger
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-ionity-a16" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Ionity - Area Servizi A16</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=200&fit=crop" alt="Ionity A16" class="detail-image">
+                
+                <div class="detail-title">Ionity - Area Servizi A16</div>
+                <div class="detail-subtitle">Autostrada • 350kW • HPC (High Power Charging)</div>
+                
+                <div class="detail-description">
+                    Stazione di ricarica ultra-rapida Ionity presso l'area di servizio dell'autostrada A16. Con potenza fino a 350kW, è una delle stazioni più veloci d'Europa, ideale per lunghi viaggi.
+                    
+                    Compatibile con tutti i veicoli elettrici dotati di connettore CCS. L'area di servizio offre ristorante, bar, market e servizi igienici. Perfetta per una sosta veloce durante viaggi autostradali verso/da Matera.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⚡</div>
+                        <div class="info-item-label">Potenza</div>
+                        <div class="info-item-value">350kW DC<br>Ultra rapida</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">🛣️</div>
+                        <div class="info-item-label">Posizione</div>
+                        <div class="info-item-value">Autostrada A16<br>Area servizi</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">🍽️</div>
+                        <div class="info-item-label">Servizi</div>
+                        <div class="info-item-value">Ristorante<br>Market</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-ionity-a16">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateTo(40.7125, 16.5245, 'Ionity Area Servizi A16', 'driving')">
+                    🚗 Naviga verso Ionity A16 (autostrada)
+                </button>
+            </div>
+        </div>
+
+        <button class="floating-btn" onclick="openMap()" title="Apri mappa">📍</button>
+    </div>
+
+    <script>
+        let userLocation = null;
+        
+        // Coordinate delle attrazioni e punti di interesse
+        const attractions = {
+            'duomo': { lat: 40.6663, lng: 16.6107 },
+            'sassi': { lat: 40.6669, lng: 16.6089 },
+            'san-pietro': { lat: 40.6655, lng: 16.6095 },
+            'musma': { lat: 40.6671, lng: 16.6101 },
+            'belvedere': { lat: 40.6635, lng: 16.6045 },
+            'casa-grotta': { lat: 40.6661, lng: 16.6087 }
+        };
+
+        // Coordinate parcheggi e colonnine
+        const parkingPoints = {
+            'parking-lucana': { lat: 40.6678, lng: 16.6120, inZTL: false },
+            'parking-lanera': { lat: 40.6595, lng: 16.5998, inZTL: false },
+            'parking-centro': { lat: 40.6680, lng: 16.6110, inZTL: true },
+            'parking-veneto': { lat: 40.6695, lng: 16.6135, inZTL: false },
+            'enel-corso': { lat: 40.6685, lng: 16.6125, inZTL: false },
+            'be-charge-lanera': { lat: 40.6595, lng: 16.5998, inZTL: false },
+            'tesla-supercharger': { lat: 40.6450, lng: 16.5890, inZTL: false },
+            'ionity-a16': { lat: 40.7125, lng: 16.5245, inZTL: false }
+        };
+
+        // Inizializzazione GPS
+        function initializeGPS() {
+            if (navigator.geolocation) {
+                document.getElementById('location-status').innerHTML = 
+                    '<span class="distance-calculating">🔄 Rilevamento posizione...</span>';
+                
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        
+                        document.getElementById('location-status').innerHTML = 
+                            '<span class="distance-ready">✅ GPS attivo - Distanze precise dalla tua posizione</span>';
+                        
+                        calculateAllDistances();
+                    },
+                    function(error) {
+                        handleGPSError(error);
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 600000 }
+                );
+            } else {
+                document.getElementById('location-status').innerHTML = 
+                    '<span style="color: #f44336;">⚠️ GPS non supportato dal browser - Distanze approssimative</span>';
+                showApproximateDistances();
+            }
+        }
+
+        // Gestione errori GPS specifici
+        function handleGPSError(error) {
+            let errorMessage = '';
+            let errorDetails = '';
+            let showRetry = true;
+            
+            switch(error.code) {
+                case 1: // PERMISSION_DENIED
+                    errorMessage = '📍 Accesso alla posizione negato';
+                    errorDetails = 'Clicca sul lucchetto 🔒 nella barra degli indirizzi e abilita la localizzazione per questo sito';
+                    showRetry = false;
+                    break;
+                case 2: // POSITION_UNAVAILABLE
+                    errorMessage = '📡 Posizione GPS non disponibile';
+                    errorDetails = 'Assicurati di essere all\'aperto e che il GPS sia attivo sul dispositivo';
+                    break;
+                case 3: // TIMEOUT
+                    errorMessage = '⏱️ Timeout del GPS';
+                    errorDetails = 'Il rilevamento della posizione sta impiegando troppo tempo';
+                    break;
+                default:
+                    errorMessage = '⚠️ Errore del sistema GPS';
+                    errorDetails = 'Si è verificato un problema tecnico con il GPS del dispositivo';
+                    break;
+            }
+            
+            document.getElementById('location-status').innerHTML = 
+                `<span style="color: #ff6b35;">${errorMessage}<br><small style="color:#666;">${errorDetails}</small></span>`;
+            
+            // Log semplificato per compatibilità
+            console.log('=== DEBUG GPS ERROR ===');
+            console.log('Codice errore: ' + error.code);
+            console.log('Messaggio: ' + (error.message || 'Nessun messaggio disponibile'));
+            console.log('Timestamp: ' + new Date().toLocaleString('it-IT'));
+            console.log('Tipo errore: ' + getErrorTypeName(error.code));
+            console.log('=======================');
+            
+            // Mostra opzioni alternative
+            setTimeout(() => {
+                let alternativesHTML = `
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
+                        <button onclick="selectManualLocation()" 
+                                style="width:100%; padding:10px; background:#28a745; color:white; border:none; border-radius:8px; cursor:pointer; margin-bottom:8px;">
+                            🎯 Seleziona posizione manualmente
+                        </button>`;
+                
+                if (showRetry) {
+                    alternativesHTML += `
+                        <button onclick="retryGPS()" 
+                                style="width:100%; padding:10px; background:#8B4513; color:white; border:none; border-radius:8px; cursor:pointer;">
+                            🔄 Riprova GPS
+                        </button>`;
+                }
+                
+                alternativesHTML += `</div>`;
+                
+                document.getElementById('location-status').innerHTML += alternativesHTML;
+            }, 1500);
+            
+            // Mostra comunque le distanze approssimative
+            showApproximateDistances();
+        }
+
+        // Ottieni nome descrittivo dell'errore
+        function getErrorTypeName(errorCode) {
+            switch(errorCode) {
+                case 1: return 'Permesso negato';
+                case 2: return 'Posizione non disponibile';
+                case 3: return 'Timeout';
+                default: return 'Errore sconosciuto';
+            }
+        }
+
+        // Funzione per riprovare il GPS con opzioni diverse
+        function retryGPS() {
+            document.getElementById('location-status').innerHTML = 
+                '<span class="distance-calculating">🔄 Nuovo tentativo GPS con impostazioni modificate...</span>';
+            
+            // Prova con opzioni meno restrittive
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        
+                        document.getElementById('location-status').innerHTML = 
+                            '<span class="distance-ready">✅ GPS attivo - Posizione rilevata con successo!</span>';
+                        
+                        calculateAllDistances();
+                    },
+                    function(error) {
+                        console.log('Secondo tentativo GPS fallito - Codice: ' + error.code);
+                        document.getElementById('location-status').innerHTML = 
+                            '<span style="color: #f44336;">❌ GPS non funzionante - Usa la selezione manuale</span>';
+                        
+                        setTimeout(() => {
+                            document.getElementById('location-status').innerHTML += `
+                                <div style="margin-top: 10px;">
+                                    <button onclick="selectManualLocation()" 
+                                            style="width:100%; padding:10px; background:#28a745; color:white; border:none; border-radius:8px; cursor:pointer;">
+                                        🎯 Seleziona posizione manualmente
+                                    </button>
+                                </div>`;
+                        }, 1000);
+                        
+                        showApproximateDistances();
+                    },
+                    { 
+                        enableHighAccuracy: false,  // Meno preciso ma più veloce
+                        timeout: 20000,             // Timeout più lungo
+                        maximumAge: 300000          // Accetta posizioni più vecchie
+                    }
+                );
+            }
+        }
+
+        // Calcola distanza tra due coordinate
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371; // Raggio della Terra in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const distance = R * c;
+            
+            if (distance < 1) {
+                return Math.round(distance * 1000) + 'm';
+            } else {
+                return distance.toFixed(1) + 'km';
+            }
+        }
+
+        // Calcola tutte le distanze
+        function calculateAllDistances() {
+            if (!userLocation) return;
+            
+            // Calcola distanze attrazioni
+            Object.keys(attractions).forEach(id => {
+                const attraction = attractions[id];
+                const distance = calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    attraction.lat, attraction.lng
+                );
+                
+                updateDistanceElements(id, distance);
+            });
+
+            // Calcola distanze parcheggi e colonnine
+            Object.keys(parkingPoints).forEach(id => {
+                const point = parkingPoints[id];
+                const distance = calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    point.lat, point.lng
+                );
+                
+                updateDistanceElements(id, distance);
+            });
+        }
+
+        // Aggiorna elementi distanza
+        function updateDistanceElements(id, distance) {
+            const distanceElement = document.getElementById(`distance-${id}`);
+            if (distanceElement) {
+                distanceElement.innerHTML = `📍 ${distance} da te`;
+            }
+            
+            const detailDistanceElement = document.getElementById(`detail-distance-${id}`);
+            if (detailDistanceElement) {
+                detailDistanceElement.textContent = distance;
+            }
+        }
+
+        // Mostra distanze approssimative se GPS non disponibile
+        function showApproximateDistances() {
+            const approximateDistances = {
+                // Attrazioni
+                'duomo': '300m',
+                'sassi': '200m', 
+                'san-pietro': '450m',
+                'musma': '500m',
+                'belvedere': '2.1km',
+                'casa-grotta': '380m',
+                // Parcheggi
+                'parking-lucana': '350m',
+                'parking-lanera': '1.5km',
+                'parking-centro': '250m',
+                'parking-veneto': '600m',
+                // Colonnine elettriche
+                'enel-corso': '550m',
+                'be-charge-lanera': '1.5km',
+                'tesla-supercharger': '2.2km',
+                'ionity-a16': '8.5km'
+            };
+            
+            Object.keys(approximateDistances).forEach(id => {
+                const distance = approximateDistances[id];
+                updateApproximateDistanceElements(id, distance);
+            });
+        }
+
+        // Aggiorna elementi con distanze approssimative
+        function updateApproximateDistanceElements(id, distance) {
+            const distanceElement = document.getElementById(`distance-${id}`);
+            if (distanceElement) {
+                distanceElement.innerHTML = `📍 ~${distance} dal centro storico`;
+            }
+            
+            const detailDistanceElement = document.getElementById(`detail-distance-${id}`);
+            if (detailDistanceElement) {
+                detailDistanceElement.textContent = `~${distance} dal centro`;
+            }
+        }
+
+        // Opzione per selezionare posizione manualmente
+        function selectManualLocation() {
+            const locations = [
+                { name: 'Centro Storico/Duomo', lat: 40.6663, lng: 16.6107 },
+                { name: 'Stazione Ferroviaria', lat: 40.6614, lng: 16.6041 },
+                { name: 'Ospedale Madonna delle Grazie', lat: 40.6742, lng: 16.5997 },
+                { name: 'Università della Basilicata', lat: 40.6691, lng: 16.6234 },
+                { name: 'Hotel/B&B zona Sassi', lat: 40.6665, lng: 16.6095 }
+            ];
+
+            let optionsHTML = locations.map((loc, index) => 
+                `<button onclick="setManualLocation(${loc.lat}, ${loc.lng}, '${loc.name}')" 
+                 style="display:block;width:100%;margin:5px 0;padding:10px;background:#f8f9fa;border:1px solid #ddd;border-radius:8px;cursor:pointer;text-align:left;">
+                 📍 ${loc.name}
+                </button>`
+            ).join('');
+
+            document.getElementById('location-status').innerHTML = 
+                `<div style="text-align:left;">
+                    <strong>🎯 Seleziona la tua posizione:</strong><br>
+                    ${optionsHTML}
+                    <button onclick="initializeGPS()" style="width:100%;margin-top:10px;padding:10px;background:#8B4513;color:white;border:none;border-radius:8px;cursor:pointer;">
+                        🔄 Riprova GPS automatico
+                    </button>
+                </div>`;
+        }
+
+        // Imposta posizione manuale
+        function setManualLocation(lat, lng, locationName) {
+            userLocation = { lat: lat, lng: lng };
+            
+            document.getElementById('location-status').innerHTML = 
+                `<span class="distance-ready">📍 Posizione impostata: ${locationName} - Distanze calcolate</span>`;
+            
+            calculateAllDistances();
+        }
+
+        // Apri pagina di dettaglio (attrazioni, parcheggi, colonnine)
+        function openDetail(itemId) {
+            const detailPage = document.getElementById(`detail-${itemId}`);
+            if (detailPage) {
+                detailPage.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                
+                // Aggiorna la distanza specifica per l'elemento aperto
+                if (userLocation) {
+                    let coordinates = null;
+                    
+                    // Trova le coordinate appropriate
+                    if (attractions[itemId]) {
+                        coordinates = attractions[itemId];
+                    } else if (parkingPoints[itemId]) {
+                        coordinates = parkingPoints[itemId];
+                    }
+                    
+                    if (coordinates) {
+                        const distance = calculateDistance(
+                            userLocation.lat, userLocation.lng,
+                            coordinates.lat, coordinates.lng
+                        );
+                        
+                        const detailDistanceElement = document.getElementById(`detail-distance-${itemId}`);
+                        if (detailDistanceElement) {
+                            detailDistanceElement.textContent = distance;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Chiudi pagina di dettaglio
+        function closeDetail() {
+            document.querySelectorAll('.detail-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.body.style.overflow = 'auto';
+        }
+
+        // Naviga verso attrazione o parcheggio
+        function navigateTo(lat, lng, name, mode = 'walking') {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            let travelMode = '';
+            let avoidOptions = '';
+            
+            if (mode === 'driving') {
+                travelMode = '&travelmode=driving';
+                avoidOptions = '&avoid=tolls'; // Evita pedaggi e preferisce strade alternative
+            } else {
+                travelMode = '&travelmode=walking';
+            }
+            
+            if (isIOS) {
+                // Apple Maps con modalità specificata
+                if (mode === 'driving') {
+                    window.open(`maps://maps.google.com/maps?daddr=${lat},${lng}&dirflg=d`);
+                } else {
+                    window.open(`maps://maps.google.com/maps?daddr=${lat},${lng}&dirflg=w`);
+                }
+            } else if (isAndroid) {
+                // Google Maps Android con modalità
+                if (mode === 'driving') {
+                    window.open(`google.navigation:q=${lat},${lng}&mode=d`);
+                } else {
+                    window.open(`google.navigation:q=${lat},${lng}&mode=w`);
+                }
+            } else {
+                // Google Maps web con opzioni complete
+                const baseUrl = 'https://www.google.com/maps/dir/?api=1';
+                const destination = `&destination=${lat},${lng}`;
+                const placeName = `&destination_place_id=${encodeURIComponent(name)}`;
+                window.open(baseUrl + destination + travelMode + avoidOptions + placeName);
+            }
+        }
+        function showTab(tabName) {
+            // Nasconde tutti i contenuti
+            document.getElementById('attractions-content').classList.add('hidden');
+            document.getElementById('parking-content').classList.add('hidden');
+            document.getElementById('electric-content').classList.add('hidden');
+            
+            // Mostra il contenuto selezionato
+            document.getElementById(tabName + '-content').classList.remove('hidden');
+            
+            // Aggiorna i tab attivi
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function filterByType(type, section) {
+            // Aggiorna i pulsanti attivi
+            event.target.parentElement.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filtra le carte
+            const selector = section === 'attraction' ? '.attraction-card' : '.parking-card';
+            document.querySelectorAll(selector).forEach(card => {
+                if (type === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const cardType = card.getAttribute('data-type');
+                    if (section === 'parking' && type === 'free') {
+                        card.style.display = card.querySelector('.info-tag.free') ? 'block' : 'none';
+                    } else if (section === 'parking' && type === 'paid') {
+                        card.style.display = card.querySelector('.info-tag.paid') ? 'block' : 'none';
+                    } else if (section === 'parking' && type === 'covered') {
+                        card.style.display = cardType === 'covered' ? 'block' : 'none';
+                    } else if (section === 'electric' && type === 'fast') {
+                        card.style.display = cardType === 'fast' ? 'block' : 'none';
+                    } else if (section === 'electric' && type === 'free-parking') {
+                        card.style.display = card.querySelector('.info-tag.free-parking') ? 'block' : 'none';
+                    } else {
+                        card.style.display = cardType === type ? 'block' : 'none';
+                    }
+                }
+            });
+        }
+
+        function filterContent(searchTerm, section) {
+            const selector = section === 'attraction' ? '.attraction-card' : '.parking-card';
+            const searchLower = searchTerm.toLowerCase();
+            
+            document.querySelectorAll(selector).forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const description = card.querySelector('.card-description').textContent.toLowerCase();
+                const subtitle = card.querySelector('.card-subtitle').textContent.toLowerCase();
+                
+                if (title.includes(searchLower) || description.includes(searchLower) || subtitle.includes(searchLower)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function openMap() {
+            // Apre una mappa con tutte le attrazioni, parcheggi e colonnine
+            if (userLocation) {
+                const centerLat = userLocation.lat;
+                const centerLng = userLocation.lng;
+                // Cerca tutti i punti di interesse di Matera vicino alla posizione utente
+                window.open(`https://www.google.com/maps/search/attrazioni+parcheggi+matera/@${centerLat},${centerLng},14z`);
+            } else {
+                // Se non ha GPS, centra sui Sassi di Matera
+                window.open('https://www.google.com/maps/search/attrazioni+parcheggi+matera/@40.6669,16.6089,14z');
+            }
+        }
+
+        // Inizializzazione app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inizializza GPS
+            initializeGPS();
+            
+            // Aggiunge effetti di hover per migliorare l'esperienza utente
+            const cards = document.querySelectorAll('.attraction-card, .parking-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Effetto di feedback al click solo se non è un'attrazione (che ha onclick)
+                    if (!this.hasAttribute('onclick')) {
+                        this.style.transform = 'scale(0.98)';
+                        setTimeout(() => {
+                            this.style.transform = '';
+                        }, 150);
+                    }
+                });
+            });
+
+            // Gestione tasto indietro per chiudere dettagli
+            window.addEventListener('popstate', function() {
+                closeDetail();
+            });
+        });
+    </script>
+</body>
+</html>
