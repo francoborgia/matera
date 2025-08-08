@@ -85,7 +85,17 @@
             transition: transform 0.2s;
         }
 
-        .attraction-card:hover, .parking-card:hover {
+        .restaurant-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .attraction-card:hover, .parking-card:hover, .restaurant-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
@@ -119,6 +129,16 @@
 
         .electric-icon {
             background: #007bff;
+            color: white;
+        }
+
+        .restaurant-icon {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .fastfood-icon {
+            background: #dc3545;
             color: white;
         }
 
@@ -168,6 +188,49 @@
         .info-tag.electric {
             background: #cce7ff;
             color: #004085;
+        }
+
+        .info-tag.traditional {
+            background: #e7f3ff;
+            color: #0066cc;
+        }
+
+        .info-tag.fastfood {
+            background: #ffe6e6;
+            color: #cc0000;
+        }
+
+        .phone-number {
+            background: #e8f5e8;
+            color: #2d7d32;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .phone-number:hover {
+            background: #c8e6c9;
+            transform: translateY(-1px);
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .cuisine-type {
+            background: #fff3e0;
+            color: #f57c00;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 2px;
         }
 
         .search-box {
@@ -518,6 +581,7 @@
 
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="showTab('attractions')">🏛️ Attrazioni</button>
+            <button class="nav-tab" onclick="showTab('restaurants')">🍝 Ristoranti</button>
             <button class="nav-tab" onclick="showTab('parking')">🅿️ Parcheggi</button>
             <button class="nav-tab" onclick="showTab('electric')">🔌 Elettrico</button>
         </div>
@@ -651,6 +715,217 @@
                         <span class="info-tag paid">€ 3</span>
                         <span class="info-tag">⭐ 4.2</span>
                         <span class="distance-info" id="distance-casa-grotta">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione Ristoranti -->
+            <div id="restaurants-content" class="hidden">
+                <!-- Widget Meteo -->
+                <div id="weather-container-restaurants">
+                    <div class="weather-loading">
+                        <div>🌤️ Meteo Matera...</div>
+                    </div>
+                </div>
+                
+                <input type="text" class="search-box" placeholder="🔍 Cerca ristoranti..." oninput="filterContent(this.value, 'restaurant')">
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByType('all', 'restaurant')">Tutti</button>
+                    <button class="filter-btn" onclick="filterByType('traditional', 'restaurant')">Tipici</button>
+                    <button class="filter-btn" onclick="filterByType('fastfood', 'restaurant')">Fast Food</button>
+                    <button class="filter-btn" onclick="filterByType('nearby', 'restaurant')">Vicini</button>
+                </div>
+
+                <!-- Ristoranti Tipici -->
+                <div class="attraction-card restaurant-card" data-type="traditional" data-id="osteria-malatesta" onclick="openDetail('osteria-malatesta')">
+                    <div class="card-header">
+                        <div class="card-icon restaurant-icon">🍝</div>
+                        <div>
+                            <div class="card-title">Osteria al Casale</div>
+                            <div class="card-subtitle">Cucina tipica lucana • Centro Storico</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Autentica cucina materana nei Sassi. Specialità: pane di Matera, agnello alla pignata, peperoni cruschi. Ambiente caratteristico in grotta.
+                    </div>
+                    <div class="card-info">
+                        <span class="rating-stars">⭐⭐⭐⭐⭐ 4.8</span>
+                        <span class="cuisine-type">Lucana</span>
+                        <span class="info-tag traditional">Tipico</span>
+                        <span class="distance-info" id="distance-osteria-malatesta">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card restaurant-card" data-type="traditional" data-id="ristorante-francesca" onclick="openDetail('ristorante-francesca')">
+                    <div class="card-header">
+                        <div class="card-icon restaurant-icon">🍷</div>
+                        <div>
+                            <div class="card-title">Ristorante Francesca</div>
+                            <div class="card-subtitle">Cucina raffinata • Sasso Caveoso</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Elegante ristorante con vista sui Sassi. Cucina moderna con ingredienti locali. Carta vini eccellente con etichette basilicate.
+                    </div>
+                    <div class="card-info">
+                        <span class="rating-stars">⭐⭐⭐⭐⭐ 4.7</span>
+                        <span class="cuisine-type">Moderna</span>
+                        <span class="info-tag traditional">Gourmet</span>
+                        <span class="distance-info" id="distance-ristorante-francesca">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card restaurant-card" data-type="traditional" data-id="le-botteghe" onclick="openDetail('le-botteghe')">
+                    <div class="card-header">
+                        <div class="card-icon restaurant-icon">🥖</div>
+                        <div>
+                            <div class="card-title">Le Botteghe</div>
+                            <div class="card-subtitle">Osteria tipica • Via del Corso</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Osteria familiare con ricette della nonna. Pane di Matera DOP, orecchiette fatte a mano, crapiata. Prezzi onesti.
+                    </div>
+                    <div class="card-info">
+                        <span class="rating-stars">⭐⭐⭐⭐ 4.5</span>
+                        <span class="cuisine-type">Casalinga</span>
+                        <span class="info-tag traditional">Economico</span>
+                        <span class="distance-info" id="distance-le-botteghe">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card restaurant-card" data-type="traditional" data-id="soul-kitchen" onclick="openDetail('soul-kitchen')">
+                    <div class="card-header">
+                        <div class="card-icon restaurant-icon">🎵</div>
+                        <div>
+                            <div class="card-title">Soul Kitchen</div>
+                            <div class="card-subtitle">Fusion lucana • Design moderno</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Cucina creativa che reinterpreta i sapori lucani. Ambiente moderno nei Sassi. Live music il weekend.
+                    </div>
+                    <div class="card-info">
+                        <span class="rating-stars">⭐⭐⭐⭐ 4.6</span>
+                        <span class="cuisine-type">Fusion</span>
+                        <span class="info-tag traditional">Trendy</span>
+                        <span class="distance-info" id="distance-soul-kitchen">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card restaurant-card" data-type="traditional" data-id="ristorante-castello" onclick="openDetail('ristorante-castello')">
+                    <div class="card-header">
+                        <div class="card-icon restaurant-icon">🏰</div>
+                        <div>
+                            <div class="card-title">Ristorante Castello</div>
+                            <div class="card-subtitle">Alta cucina • Vista panoramica</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Ristorante elegante con terrazza panoramica sui Sassi. Cucina stellata, servizio impeccabile. Prenotazione consigliata.
+                    </div>
+                    <div class="card-info">
+                        <span class="rating-stars">⭐⭐⭐⭐⭐ 4.9</span>
+                        <span class="cuisine-type">Alta cucina</span>
+                        <span class="info-tag traditional">Lusso</span>
+                        <span class="distance-info" id="distance-ristorante-castello">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card restaurant-card" data-type="traditional" data-id="trattoria-lucana" onclick="openDetail('trattoria-lucana')">
+                    <div class="card-header">
+                        <div class="card-icon restaurant-icon">👨‍🍳</div>
+                        <div>
+                            <div class="card-title">Trattoria Lucana</div>
+                            <div class="card-subtitle">Tradizione dal 1950 • Centro</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Storica trattoria a conduzione familiare. Ricette autentiche tramandate di generazione. Miglior rapporto qualità-prezzo.
+                    </div>
+                    <div class="card-info">
+                        <span class="rating-stars">⭐⭐⭐⭐⭐ 4.8</span>
+                        <span class="cuisine-type">Tradizionale</span>
+                        <span class="info-tag traditional">Storico</span>
+                        <span class="distance-info" id="distance-trattoria-lucana">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <!-- Fast Food -->
+                <div class="attraction-card restaurant-card" data-type="fastfood" data-id="mcdonalds-matera" onclick="openDetail('mcdonalds-matera')">
+                    <div class="card-header">
+                        <div class="card-icon fastfood-icon">🍔</div>
+                        <div>
+                            <div class="card-title">McDonald's Matera</div>
+                            <div class="card-subtitle">Fast food • Zona commerciale</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        McDonald's con area giochi per bambini. Drive-through, parcheggio gratuito. Aperto 24h nei weekend.
+                    </div>
+                    <div class="card-info">
+                        <span class="rating-stars">⭐⭐⭐ 3.8</span>
+                        <span class="cuisine-type">Americano</span>
+                        <span class="info-tag fastfood">Fast food</span>
+                        <span class="distance-info" id="distance-mcdonalds-matera">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card restaurant-card" data-type="fastfood" data-id="wild-west-steakhouse" onclick="openDetail('wild-west-steakhouse')">
+                    <div class="card-header">
+                        <div class="card-icon fastfood-icon">🤠</div>
+                        <div>
+                            <div class="card-title">Wild West Steakhouse</div>
+                            <div class="card-subtitle">Steakhouse • Tema western</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Ristorante a tema western con carni alla griglia. Atmosfera Far West, porzioni abbondanti. Ideale per famiglie.
+                    </div>
+                    <div class="card-info">
+                        <span class="rating-stars">⭐⭐⭐⭐ 4.2</span>
+                        <span class="cuisine-type">Steakhouse</span>
+                        <span class="info-tag fastfood">Famiglia</span>
+                        <span class="distance-info" id="distance-wild-west-steakhouse">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card restaurant-card" data-type="fastfood" data-id="burger-king" onclick="openDetail('burger-king')">
+                    <div class="card-header">
+                        <div class="card-icon fastfood-icon">👑</div>
+                        <div>
+                            <div class="card-title">Burger King</div>
+                            <div class="card-subtitle">Fast food • Centro commerciale</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Burger King con menù completo. WiFi gratuito, area relax. Vicino ai negozi principali.
+                    </div>
+                    <div class="card-info">
+                        <span class="rating-stars">⭐⭐⭐ 3.7</span>
+                        <span class="cuisine-type">Burger</span>
+                        <span class="info-tag fastfood">Veloce</span>
+                        <span class="distance-info" id="distance-burger-king">📍 Calcolo distanza...</span>
+                    </div>
+                </div>
+
+                <div class="attraction-card restaurant-card" data-type="fastfood" data-id="old-west-saloon" onclick="openDetail('old-west-saloon')">
+                    <div class="card-header">
+                        <div class="card-icon fastfood-icon">🍺</div>
+                        <div>
+                            <div class="card-title">Old West Saloon</div>
+                            <div class="card-subtitle">Pub & Grill • Serata live</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Pub in stile saloon con birre artigianali e grigliata. Musica dal vivo, ambiente giovane. Aperto fino a tardi.
+                    </div>
+                    <div class="card-info">
+                        <span class="rating-stars">⭐⭐⭐⭐ 4.1</span>
+                        <span class="cuisine-type">Pub</span>
+                        <span class="info-tag fastfood">Serale</span>
+                        <span class="distance-info" id="distance-old-west-saloon">📍 Calcolo distanza...</span>
                     </div>
                 </div>
             </div>
@@ -1144,6 +1419,207 @@
             </div>
         </div>
 
+        <!-- Pagine di Dettaglio Ristoranti -->
+        <div id="detail-osteria-malatesta" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Osteria al Casale</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=200&fit=crop" alt="Osteria al Casale" class="detail-image">
+                
+                <div class="detail-title">Osteria al Casale</div>
+                <div class="detail-subtitle">Cucina tipica lucana • Centro Storico</div>
+                
+                <div class="phone-number" onclick="callRestaurant('+39 0835 333518', 'Osteria al Casale')">
+                    📞 +39 0835 333518 - Clicca per chiamare
+                </div>
+                
+                <div class="detail-description">
+                    Autentica osteria nei Sassi che serve i piatti della tradizione materana da tre generazioni. Ambiente caratteristico ricavato in una grotta naturale con volta a botte. Specialità della casa: pane di Matera DOP caldo, agnello alla pignata cotto nel forno a legna, peperoni cruschi croccanti e pasta fatta in casa.
+                    
+                    Il menu cambia seguendo la stagionalità degli ingredienti locali. Cantina con oltre 200 etichette di vini lucani e del Sud Italia. Prenotazione fortemente consigliata, soprattutto nei weekend.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⏰</div>
+                        <div class="info-item-label">Orari</div>
+                        <div class="info-item-value">12:00-15:00<br>19:00-23:00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo medio</div>
+                        <div class="info-item-value">€ 25-35<br>a persona</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⭐</div>
+                        <div class="info-item-label">Valutazione cibo</div>
+                        <div class="info-item-value">4.8/5<br>Eccellente</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-osteria-malatesta">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateToRestaurant(40.6667, 16.6095, 'Osteria al Casale')">
+                    🧭 Navigazione automatica
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-ristorante-francesca" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Ristorante Francesca</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=200&fit=crop" alt="Ristorante Francesca" class="detail-image">
+                
+                <div class="detail-title">Ristorante Francesca</div>
+                <div class="detail-subtitle">Cucina raffinata • Sasso Caveoso</div>
+                
+                <div class="phone-number" onclick="callRestaurant('+39 0835 333522', 'Ristorante Francesca')">
+                    📞 +39 0835 333522 - Clicca per chiamare
+                </div>
+                
+                <div class="detail-description">
+                    Elegante ristorante gourmet con terrazza panoramica sui Sassi. Cucina moderna che reinterpreta i sapori della tradizione lucana con tecniche contemporanee. Chef stellato che propone menu degustazione stagionali.
+                    
+                    Ambiente raffinato con vista mozzafiato, ideale per cene romantiche e occasioni speciali. Carta vini curata con etichette pregiate nazionali e internazionali. Servizio impeccabile e attenzione ai dettagli.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⏰</div>
+                        <div class="info-item-label">Orari</div>
+                        <div class="info-item-value">19:30-23:00<br>Chiuso lunedì</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo medio</div>
+                        <div class="info-item-value">€ 45-65<br>a persona</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⭐</div>
+                        <div class="info-item-label">Valutazione cibo</div>
+                        <div class="info-item-value">4.7/5<br>Ottimo</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-ristorante-francesca">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateToRestaurant(40.6672, 16.6089, 'Ristorante Francesca')">
+                    🧭 Navigazione automatica
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-wild-west-steakhouse" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>Wild West Steakhouse</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=200&fit=crop" alt="Wild West Steakhouse" class="detail-image">
+                
+                <div class="detail-title">Wild West Steakhouse</div>
+                <div class="detail-subtitle">Steakhouse • Tema western</div>
+                
+                <div class="phone-number" onclick="callRestaurant('+39 0835 347234', 'Wild West Steakhouse')">
+                    📞 +39 0835 347234 - Clicca per chiamare
+                </div>
+                
+                <div class="detail-description">
+                    Ristorante a tema western con atmosfera Far West autentica. Specializzato in carni alla griglia di alta qualità: T-bone, costolette, hamburger gourmet e pollo arrosto. Porzioni generose ideali per famiglie con bambini.
+                    
+                    Ambiente divertente con arredamento western, musica country e staff in costume. Area giochi per bambini e parcheggio privato gratuito. Menu bambini disponibile.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⏰</div>
+                        <div class="info-item-label">Orari</div>
+                        <div class="info-item-value">12:00-15:00<br>19:00-24:00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo medio</div>
+                        <div class="info-item-value">€ 20-30<br>a persona</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⭐</div>
+                        <div class="info-item-label">Valutazione cibo</div>
+                        <div class="info-item-value">4.2/5<br>Buono</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-wild-west-steakhouse">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateToRestaurant(40.6680, 16.6145, 'Wild West Steakhouse')">
+                    🧭 Navigazione automatica
+                </button>
+            </div>
+        </div>
+
+        <div id="detail-mcdonalds-matera" class="detail-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="closeDetail()">←</button>
+                <h2>McDonald's Matera</h2>
+            </div>
+            <div class="detail-content">
+                <img src="https://images.unsplash.com/photo-1552566687-ddb74fa7eb67?w=400&h=200&fit=crop" alt="McDonald's Matera" class="detail-image">
+                
+                <div class="detail-title">McDonald's Matera</div>
+                <div class="detail-subtitle">Fast food • Zona commerciale</div>
+                
+                <div class="phone-number" onclick="callRestaurant('+39 0835 346789', 'McDonald\'s Matera')">
+                    📞 +39 0835 346789 - Clicca per chiamare
+                </div>
+                
+                <div class="detail-description">
+                    McDonald's con menu completo e servizi aggiuntivi. Drive-through disponibile per ordini veloci. Area giochi coperta per bambini con scivoli e giochi interattivi.
+                    
+                    WiFi gratuito, prese per ricaricare dispositivi e ampio parcheggio gratuito. Aperto 24 ore nei weekend. App McDonald's per ordinare e saltare la fila.
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">⏰</div>
+                        <div class="info-item-label">Orari</div>
+                        <div class="info-item-value">6:00-1:00<br>24h weekend</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">💰</div>
+                        <div class="info-item-label">Prezzo medio</div>
+                        <div class="info-item-value">€ 8-12<br>a persona</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">⭐</div>
+                        <div class="info-item-label">Valutazione</div>
+                        <div class="info-item-value">3.8/5<br>Veloce</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">📍</div>
+                        <div class="info-item-label">Distanza</div>
+                        <div class="info-item-value" id="detail-distance-mcdonalds-matera">Calcolo...</div>
+                    </div>
+                </div>
+                
+                <button class="navigate-btn" onclick="navigateToRestaurant(40.6720, 16.6180, 'McDonald\'s Matera')">
+                    🧭 Navigazione automatica
+                </button>
+            </div>
+        </div>
+
         <!-- Pagine di Dettaglio Parcheggi -->
         <div id="detail-parking-lucana" class="detail-page">
             <div class="detail-header">
@@ -1523,6 +1999,9 @@
         
         <!-- Pulsante test navigazione (solo per debug) -->
         <button onclick="testNavigation()" style="position:fixed;bottom:20px;left:20px;width:40px;height:40px;background:#333;color:white;border:none;border-radius:50%;font-size:12px;z-index:1001;cursor:pointer;" title="Test navigazione">🧭</button>
+        
+        <!-- Pulsante test navigazione intelligente -->
+        <button onclick="testSmartNavigation()" style="position:fixed;bottom:70px;left:20px;width:40px;height:40px;background:#fd7e14;color:white;border:none;border-radius:50%;font-size:12px;z-index:1001;cursor:pointer;" title="Test navigazione intelligente">🍝</button>
     </div>
 
     <script>
@@ -1549,6 +2028,23 @@
             'be-charge-lanera': { lat: 40.6595, lng: 16.5998, inZTL: false },
             'tesla-supercharger': { lat: 40.6450, lng: 16.5890, inZTL: false },
             'ionity-a16': { lat: 40.7125, lng: 16.5245, inZTL: false }
+        };
+
+        // Coordinate ristoranti e fast food
+        const restaurants = {
+            // Ristoranti tipici
+            'osteria-malatesta': { lat: 40.6667, lng: 16.6095, type: 'traditional', phone: '+39 0835 333518' },
+            'ristorante-francesca': { lat: 40.6672, lng: 16.6089, type: 'traditional', phone: '+39 0835 333522' },
+            'le-botteghe': { lat: 40.6660, lng: 16.6102, type: 'traditional', phone: '+39 0835 344072' },
+            'soul-kitchen': { lat: 40.6665, lng: 16.6085, type: 'traditional', phone: '+39 0835 333675' },
+            'ristorante-castello': { lat: 40.6663, lng: 16.6110, type: 'traditional', phone: '+39 0835 344030' },
+            'trattoria-lucana': { lat: 40.6669, lng: 16.6078, type: 'traditional', phone: '+39 0835 336117' },
+            
+            // Fast food e catene
+            'mcdonalds-matera': { lat: 40.6720, lng: 16.6180, type: 'fastfood', phone: '+39 0835 346789' },
+            'wild-west-steakhouse': { lat: 40.6680, lng: 16.6145, type: 'fastfood', phone: '+39 0835 347234' },
+            'burger-king': { lat: 40.6710, lng: 16.6170, type: 'fastfood', phone: '+39 0835 348901' },
+            'old-west-saloon': { lat: 40.6685, lng: 16.6155, type: 'fastfood', phone: '+39 0835 349567' }
         };
 
         // ===== SISTEMA METEO =====
@@ -1684,6 +2180,7 @@
         function displayWeather(weather) {
             const containers = [
                 'weather-container',
+                'weather-container-restaurants',
                 'weather-container-parking', 
                 'weather-container-electric'
             ];
@@ -1742,6 +2239,7 @@
         function displayWeatherError(message) {
             const containers = [
                 'weather-container',
+                'weather-container-restaurants',
                 'weather-container-parking', 
                 'weather-container-electric'
             ];
@@ -2000,6 +2498,17 @@
                 
                 updateDistanceElements(id, distance);
             });
+
+            // Calcola distanze ristoranti
+            Object.keys(restaurants).forEach(id => {
+                const restaurant = restaurants[id];
+                const distance = calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    restaurant.lat, restaurant.lng
+                );
+                
+                updateDistanceElements(id, distance);
+            });
         }
 
         // Aggiorna elementi distanza
@@ -2034,7 +2543,19 @@
                 'enel-corso': '550m',
                 'be-charge-lanera': '1.5km',
                 'tesla-supercharger': '2.2km',
-                'ionity-a16': '8.5km'
+                'ionity-a16': '8.5km',
+                // Ristoranti tipici
+                'osteria-malatesta': '280m',
+                'ristorante-francesca': '320m',
+                'le-botteghe': '400m',
+                'soul-kitchen': '350m',
+                'ristorante-castello': '300m',
+                'trattoria-lucana': '450m',
+                // Fast food
+                'mcdonalds-matera': '1.8km',
+                'wild-west-steakhouse': '1.2km',
+                'burger-king': '1.7km',
+                'old-west-saloon': '1.3km'
             };
             
             Object.keys(approximateDistances).forEach(id => {
@@ -2096,7 +2617,7 @@
             loadWeather(lat, lng);
         }
 
-        // Apri pagina di dettaglio (attrazioni, parcheggi, colonnine)
+        // Apri pagina di dettaglio (attrazioni, parcheggi, colonnine, ristoranti)
         function openDetail(itemId) {
             const detailPage = document.getElementById(`detail-${itemId}`);
             if (detailPage) {
@@ -2115,6 +2636,8 @@
                         coordinates = attractions[itemId];
                     } else if (parkingPoints[itemId]) {
                         coordinates = parkingPoints[itemId];
+                    } else if (restaurants[itemId]) {
+                        coordinates = restaurants[itemId];
                     }
                     
                     if (coordinates) {
@@ -2170,7 +2693,77 @@
             // Se non ci sono dettagli aperti, lascia che il browser gestisca normalmente
         }
 
-        // Naviga verso attrazione o parcheggio
+        // Navigazione intelligente automatica per ristoranti
+        function navigateToRestaurant(lat, lng, name) {
+            let travelMode = 'walking'; // Default
+            let distance = 0;
+            
+            if (userLocation) {
+                // Calcola distanza in metri
+                const distanceKm = calculateDistanceInKm(userLocation.lat, userLocation.lng, lat, lng);
+                distance = Math.round(distanceKm * 1000); // Converti in metri
+                
+                // Logica automatica: >1km = auto, <=1km = a piedi
+                travelMode = distance > 1000 ? 'driving' : 'walking';
+                
+                console.log(`🧭 Ristorante ${name}: ${distance}m -> Modalità: ${travelMode}`);
+            }
+            
+            // Chiama la navigazione con la modalità scelta
+            navigateTo(lat, lng, name, travelMode);
+            
+            // Feedback specifico per ristoranti
+            const modeIcon = travelMode === 'driving' ? '🚗' : '🚶‍♂️';
+            const modeText = travelMode === 'driving' ? 'auto' : 'piedi';
+            const reason = distance > 1000 ? `(${Math.round(distance/1000*10)/10}km - troppo lontano per camminare)` 
+                                          : `(${distance}m - raggiungibile a piedi)`;
+            
+            showNavigationFeedback(travelMode, `${name} ${reason}`);
+        }
+
+        // Calcola distanza in km (per logica navigazione)
+        function calculateDistanceInKm(lat1, lng1, lat2, lng2) {
+            const R = 6371; // Raggio della Terra in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Chiama numero di telefono
+        function callRestaurant(phoneNumber, restaurantName) {
+            if (phoneNumber) {
+                window.open(`tel:${phoneNumber}`);
+                
+                // Feedback visivo
+                const feedback = document.createElement('div');
+                feedback.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(46, 125, 50, 0.9);
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 12px;
+                    font-size: 16px;
+                    z-index: 10000;
+                    text-align: center;
+                `;
+                
+                feedback.innerHTML = `📞 Chiamata a ${restaurantName}`;
+                document.body.appendChild(feedback);
+                
+                setTimeout(() => {
+                    if (feedback.parentNode) {
+                        feedback.parentNode.removeChild(feedback);
+                    }
+                }, 2000);
+            }
+        }
         function navigateTo(lat, lng, name, mode = 'walking') {
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             const isAndroid = /Android/.test(navigator.userAgent);
@@ -2252,7 +2845,42 @@
             }, 2000);
         }
 
-        // Test funzione navigazione (per debug)
+        // Test navigazione intelligente ristoranti
+        function testSmartNavigation() {
+            console.log('=== TEST NAVIGAZIONE INTELLIGENTE ===');
+            
+            if (userLocation) {
+                console.log('Posizione utente:', userLocation);
+                
+                // Test con diversi ristoranti
+                const testRestaurants = [
+                    { name: 'Osteria al Casale (centro)', lat: 40.6667, lng: 16.6095 },
+                    { name: 'McDonald\'s (periferia)', lat: 40.6720, lng: 16.6180 }
+                ];
+                
+                testRestaurants.forEach(restaurant => {
+                    const distanceKm = calculateDistanceInKm(
+                        userLocation.lat, userLocation.lng,
+                        restaurant.lat, restaurant.lng
+                    );
+                    const distanceM = Math.round(distanceKm * 1000);
+                    const mode = distanceM > 1000 ? 'auto' : 'piedi';
+                    
+                    console.log(`${restaurant.name}: ${distanceM}m -> ${mode}`);
+                });
+            } else {
+                console.log('GPS non disponibile - la navigazione intelligente userà modalità di default');
+                console.log('Ristoranti nel centro: a piedi');
+                console.log('Ristoranti fuori centro: auto');
+            }
+            
+            console.log('=====================================');
+            
+            // Simula navigazione intelligente
+            if (confirm('Vuoi testare la navigazione intelligente verso un ristorante?')) {
+                navigateToRestaurant(40.6667, 16.6095, 'Test - Osteria al Casale');
+            }
+        }
         function testNavigation() {
             console.log('=== TEST NAVIGAZIONE ===');
             console.log('User Agent:', navigator.userAgent);
@@ -2264,12 +2892,18 @@
         // Verifica presenza pulsanti navigazione
         function checkNavigationButtons() {
             const expectedButtons = [
+                // Attrazioni
                 'detail-duomo',
                 'detail-sassi', 
                 'detail-san-pietro',
                 'detail-musma',
                 'detail-belvedere',
-                'detail-casa-grotta'
+                'detail-casa-grotta',
+                // Ristoranti (esempi)
+                'detail-osteria-malatesta',
+                'detail-ristorante-francesca',
+                'detail-wild-west-steakhouse',
+                'detail-mcdonalds-matera'
             ];
             
             expectedButtons.forEach(pageId => {
@@ -2282,10 +2916,18 @@
                         // Crea pulsante mancante
                         const newButton = document.createElement('button');
                         newButton.className = 'navigate-btn';
-                        newButton.innerHTML = '🚶‍♂️ Naviga a piedi (ripristinato automaticamente)';
-                        newButton.onclick = function() {
-                            alert('Pulsante ripristinato automaticamente - aggiorna l\'app');
-                        };
+                        if (pageId.includes('detail-osteria') || pageId.includes('detail-ristorante') || 
+                            pageId.includes('detail-wild') || pageId.includes('detail-mcd')) {
+                            newButton.innerHTML = '🧭 Navigazione automatica (ripristinato)';
+                            newButton.onclick = function() {
+                                alert('Pulsante ripristinato automaticamente - aggiorna l\'app');
+                            };
+                        } else {
+                            newButton.innerHTML = '🚶‍♂️ Naviga a piedi (ripristinato automaticamente)';
+                            newButton.onclick = function() {
+                                alert('Pulsante ripristinato automaticamente - aggiorna l\'app');
+                            };
+                        }
                         
                         const content = page.querySelector('.detail-content');
                         if (content) {
@@ -2320,6 +2962,7 @@
         function showTab(tabName) {
             // Nasconde tutti i contenuti
             document.getElementById('attractions-content').classList.add('hidden');
+            document.getElementById('restaurants-content').classList.add('hidden');
             document.getElementById('parking-content').classList.add('hidden');
             document.getElementById('electric-content').classList.add('hidden');
             
@@ -2341,31 +2984,80 @@
             event.target.classList.add('active');
 
             // Filtra le carte
-            const selector = section === 'attraction' ? '.attraction-card' : '.parking-card';
+            let selector = '';
+            if (section === 'attraction') {
+                selector = '.attraction-card:not(.restaurant-card)';
+            } else if (section === 'restaurant') {
+                selector = '.restaurant-card';
+            } else {
+                selector = '.parking-card';
+            }
+            
             document.querySelectorAll(selector).forEach(card => {
                 if (type === 'all') {
                     card.style.display = 'block';
-                } else {
+                } else if (section === 'restaurant') {
+                    // Filtri specifici per ristoranti
                     const cardType = card.getAttribute('data-type');
-                    if (section === 'parking' && type === 'free') {
+                    if (type === 'nearby') {
+                        // Mostra solo ristoranti entro 1km (se GPS disponibile)
+                        if (userLocation) {
+                            const itemId = card.getAttribute('data-id');
+                            const restaurant = restaurants[itemId];
+                            if (restaurant) {
+                                const distanceKm = calculateDistanceInKm(
+                                    userLocation.lat, userLocation.lng,
+                                    restaurant.lat, restaurant.lng
+                                );
+                                card.style.display = distanceKm <= 1 ? 'block' : 'none';
+                            }
+                        } else {
+                            // Se no GPS, mostra tutti quelli del centro (approssimativo)
+                            card.style.display = cardType === 'traditional' ? 'block' : 'none';
+                        }
+                    } else {
+                        card.style.display = cardType === type ? 'block' : 'none';
+                    }
+                } else if (section === 'parking') {
+                    // Filtri parcheggi (esistenti)
+                    const cardType = card.getAttribute('data-type');
+                    if (type === 'free') {
                         card.style.display = card.querySelector('.info-tag.free') ? 'block' : 'none';
-                    } else if (section === 'parking' && type === 'paid') {
+                    } else if (type === 'paid') {
                         card.style.display = card.querySelector('.info-tag.paid') ? 'block' : 'none';
-                    } else if (section === 'parking' && type === 'covered') {
+                    } else if (type === 'covered') {
                         card.style.display = cardType === 'covered' ? 'block' : 'none';
-                    } else if (section === 'electric' && type === 'fast') {
+                    } else {
+                        card.style.display = cardType === type ? 'block' : 'none';
+                    }
+                } else if (section === 'electric') {
+                    // Filtri colonnine (esistenti)
+                    const cardType = card.getAttribute('data-type');
+                    if (type === 'fast') {
                         card.style.display = cardType === 'fast' ? 'block' : 'none';
-                    } else if (section === 'electric' && type === 'free-parking') {
+                    } else if (type === 'free-parking') {
                         card.style.display = card.querySelector('.info-tag.free-parking') ? 'block' : 'none';
                     } else {
                         card.style.display = cardType === type ? 'block' : 'none';
                     }
+                } else {
+                    // Filtri attrazioni (esistenti)
+                    const cardType = card.getAttribute('data-type');
+                    card.style.display = cardType === type ? 'block' : 'none';
                 }
             });
         }
 
         function filterContent(searchTerm, section) {
-            const selector = section === 'attraction' ? '.attraction-card' : '.parking-card';
+            let selector = '';
+            if (section === 'attraction') {
+                selector = '.attraction-card:not(.restaurant-card)';
+            } else if (section === 'restaurant') {
+                selector = '.restaurant-card';
+            } else {
+                selector = '.parking-card';
+            }
+            
             const searchLower = searchTerm.toLowerCase();
             
             document.querySelectorAll(selector).forEach(card => {
@@ -2428,7 +3120,7 @@
             }
             
             // Aggiunge effetti di hover per migliorare l'esperienza utente
-            const cards = document.querySelectorAll('.attraction-card, .parking-card');
+            const cards = document.querySelectorAll('.attraction-card, .parking-card, .restaurant-card');
             cards.forEach(card => {
                 card.addEventListener('click', function() {
                     // Effetto di feedback al click solo se non è un'attrazione (che ha onclick)
